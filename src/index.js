@@ -19,4 +19,3 @@ app.use('/api/v1', v1Router)
 
 app.listen(port, () => console.log(`Server listening on port: ${port}. To close server press Ctrl + C`))
 
- 
