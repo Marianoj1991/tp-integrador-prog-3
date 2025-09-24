@@ -1,9 +1,12 @@
 export default class UsuariosDTO {
 
-    constructor(usuarioId, nombreUsuario, tipoUsuario, ) {
+    constructor(usuarioId, nombreUsuario, apellidoUsuario, tipoUsuario, creado ) {
         this.usuarioId = usuarioId;
         this.nombreUsuario = nombreUsuario;
+        this.apellidoUsuario = apellidoUsuario;
         this.tipoUsuario = tipoUsuario;
+        this.creado = creado;
+        this.modificado = modificado;
     }
 
     static toDBFields (obj) {
@@ -22,8 +25,6 @@ export default class UsuariosDTO {
         switch (atriObj) {
             case "usuarioId":
                 return "usuario_id";
-            case "nombreUsuario":
-                return "nombre_usuario";
             case "tipoUsuario":
                 return "tipo_usuario";
         }

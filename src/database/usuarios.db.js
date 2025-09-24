@@ -1,3 +1,5 @@
+import errorsToRecord from '@hookform/resolvers/io-ts/dist/errorsToRecord.js'
+import { allowedColumns } from '../constants'
 import DBConnection from './dbConnection.db'
 
 export default class Usuarios {
@@ -8,54 +10,86 @@ export default class Usuarios {
     order = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, modificado FROM usuarios `
+    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE activo = 1 AND `
 
     const filterValuesArray = []
 
-    if (filters) {
-      strSql += 'WHERE '
-
-      for (const filter of filters) {
-        for (const clave of Object.keys(filter)) {
-          strSql += `${clave} = ? AND `
-          filterValuesArray.push(filter[clave])
-        }
+    try {
+      if (!allowedColumns.includes(order)) {
+        throw new Error('Columna de orden inválida')
       }
 
-      strSql = strSql.substring(0, strSql.length - 4)
+      if (!allowedDirections.includes(asc.toUpperCase())) {
+        throw new Error('Dirección de orden inválida')
+      }
+
+      if (filters) {
+        for (const filter of filters) {
+          for (const clave of Object.keys(filter)) {
+            strSql += `${clave} = ? AND `
+            filterValuesArray.push(filter[clave])
+          }
+        }
+
+        strSql = strSql.substring(0, strSql.length - 4)
+      }
+
+      if (order) {
+        strSql += ` ORDER BY ${order} ${asc}`
+      }
+
+      if (limit) {
+        strSql += 'LIMIT ? OFFSET ? '
+      }
+
+      const conexion = await DBConnection.initConnection()
+
+      const [rows] = await conexion.query(strSql, [
+        ...filterValuesArray,
+        limit,
+        offset
+      ])
+
+      conexion.end()
+
+      return rows
+    } catch (error) {
+      throw new Error(error.message)
     }
-
-    if (order) {
-      strSql += ` ORDER BY ${order} ${asc}`
-    }
-
-    if (limit) {
-      strSql += 'LIMIT ? OFFSET ? '
-    }
-
-    const conexion = await DBConnection.initConnection()
-
-    const [rows] = await conexion.query(strSql, [
-      ...filterValuesArray,
-      limit,
-      offset
-    ])
-
-    conexion.end()
-
-    return rows
   }
 
   findById = async (usuarioId) => {
-    const strSql = `SELECT usuario_id, nombre, apellido, modificado FROM usuarios WHERE usuario_id = ?`
+    const strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE usuario_id = ?`
 
-    const conexion = await BdUtils.initConnection()
+    const conexion = await DBConnection.initConnection()
 
-    const [rows] = await conexion.query(strSql, [usuarioId])
+    try {
+      const [rows] = await conexion.query(strSql, [usuarioId])
 
-    conexion.end()
+      conexion.end()
 
-    return rows.length > 0 ? rows[0] : null
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      throw error
+    }
+  }
+
+  findByUserName = async (nombreUsuario) => {
+    const strSql = 'SELECT usuario_id FROM usuarios WHERE nombre_usuario = ?'
+
+    try {
+      const conexion = await DBConnection.initConnection()
+
+      const [rows] = await conexion.query(strSql, [nombreUsuario])
+
+      conexion.end()
+
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      console.error(`[DB] Error en findByUserName(${nombreUsuario}):`, error)
+
+      throw new Error('No se pudo obtener el usuario por nombre de usuario')
+    }
   }
 
   create = async ({
@@ -71,19 +105,9 @@ export default class Usuarios {
     const strSql =
       'INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);'
 
-    const strSqlVerificar =
-      'SELECT usuario_id FROM usuarios WHERE nombre_usuario = ?'
-
     const conexion = await DBConnection.initConnection()
 
     try {
-      const [rowsVerificar] = await conexion.query(strSqlVerificar, [
-        nombreUsuario
-      ])
-
-      if (rowsVerificar.length > 0) {
-        throw new Error('El nombre de usuario ya existe')
-      }
       await conexion.query(strSql, [
         nombre,
         apellido,
@@ -97,10 +121,10 @@ export default class Usuarios {
       const [rows] = await conexion.query(
         'SELECT LAST_INSERT_ID() AS usuarioId'
       )
+      conexion.end()
       return this.findById(rows[0].usuarioId)
     } catch (error) {
-    } finally {
-      conexion.end()
+      throw error
     }
   }
 
@@ -123,21 +147,24 @@ export default class Usuarios {
 
       await conexion.query(strSql, [...valores, usuarioId])
 
-      return this.findById(usuarioId) }
-    catch (error){
-      throw new Error(error.message)
-    } finally {
       conexion.end()
+      return this.findById(usuarioId)
+    } catch (error) {
+      throw new Error(error.message)
     }
   }
 
-  destroy = async (usuarioId) => {
+  delete = async (usuarioId) => {
     const strSql = 'DELETE FROM usuarios WHERE usuario_id = ?'
 
     const conexion = await BdUtils.initConnection()
 
-    await conexion.query(strSql, [usuarioId])
+    try {
+      await conexion.query(strSql, [usuarioId])
 
-    conexion.end()
+      conexion.end()
+    } catch (error) {
+      throw error
+    }
   }
 }
