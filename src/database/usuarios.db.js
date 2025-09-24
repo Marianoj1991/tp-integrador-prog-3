@@ -1,4 +1,3 @@
-import errorsToRecord from '@hookform/resolvers/io-ts/dist/errorsToRecord.js'
 import { allowedColumns } from '../constants'
 import DBConnection from './dbConnection.db'
 
