@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import { router as usuarios } from './v1/rutas/usuarios.route.js';
 import helmet from 'helmet'
 
 import v1Router from './v1/rutas/usuarios.route.js'
