@@ -18,7 +18,6 @@ export default class Usuarios {
         throw new Error('Columna de orden inválida')
       }
 
-
       if (!allowedDirections.includes(asc.trim().toUpperCase())) {
         throw new Error('Dirección de orden inválida')
       }
@@ -46,20 +45,13 @@ export default class Usuarios {
 
       const conexion = await DBConnection.initConnection()
 
-      console.log('QUERY: ', strSql);
-      console.log('PARAMS: ', params);
-
-      const [rows] = await conexion.query(strSql, [
-        params
-      ])
-
+      const [rows] = await conexion.query(strSql, [params])
 
       return rows
     } catch (error) {
-      console.log('Error catching all users [UsuariosDB][findAll]');
-      console.error('DB error:', error.code, error.sqlMessage);
-  throw error;
-
+      console.log('Error catching all users [UsuariosDB][findAll]')
+      console.error('DB error:', error.code, error.sqlMessage)
+      throw error
     }
   }
 
@@ -71,7 +63,7 @@ export default class Usuarios {
     try {
       const [rows] = await conexion.query(strSql, [usuarioId])
 
-      console.log(rows);
+      console.log(rows)
 
       return rows.length > 0 ? rows[0] : null
     } catch (error) {
@@ -84,8 +76,6 @@ export default class Usuarios {
 
     try {
       const conexion = await DBConnection.initConnection()
-
-      console.log(strSql);
 
       const [rows] = await conexion.query(strSql, [nombreUsuario])
 

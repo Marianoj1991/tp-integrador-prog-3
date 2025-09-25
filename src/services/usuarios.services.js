@@ -24,9 +24,6 @@ export default class UsuariosServices {
         strAsc
       )
 
-      console.log('DESPUES SERVICIO');
-
-      console.log(tableResults);
 
       const dtoResults = tableResults.map(
         (row) =>
@@ -38,7 +35,6 @@ export default class UsuariosServices {
             row['modificado']
           )
       )
-
 
       return dtoResults
     } catch (err) {
@@ -64,8 +60,6 @@ export default class UsuariosServices {
   create = async (usuario) => {
     const { contrasenia, ...restoUsuario } = usuario
 
-    console.log('SERVICIO', usuario);
-
     if (!usuario?.contrasenia || typeof usuario.contrasenia !== 'string') {
       throw new Error('Contraseña inválida')
     }
@@ -78,7 +72,6 @@ export default class UsuariosServices {
         contrasenia: hashedPassword,
         modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
       }
-
 
       const existingUser = await this.usuarios.findByUserName(
         usuario.nombreUsuario
