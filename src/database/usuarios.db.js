@@ -63,8 +63,6 @@ export default class Usuarios {
     try {
       const [rows] = await conexion.query(strSql, [usuarioId])
 
-      console.log(rows)
-
       return rows.length > 0 ? rows[0] : null
     } catch (error) {
       throw error
@@ -123,7 +121,7 @@ export default class Usuarios {
   }
 
   update = async (usuarioId, campos) => {
-    const conexion = await BdUtils.initConnection()
+    const conexion = await DBConnection.initConnection()
 
     try {
       const entradas = Object.entries(campos).filter(
@@ -137,11 +135,10 @@ export default class Usuarios {
       const setClause = entradas.map(([campo]) => `${campo} = ?`).join(', ')
       const valores = entradas.map(([_, valor]) => valor)
 
-      const strSql = `UPDATE usuarios SET ${setClause} WHERE actor_id = ?`
+      const strSql = `UPDATE usuarios SET ${setClause} WHERE usuario_id = ?`
 
       await conexion.query(strSql, [...valores, usuarioId])
 
-      conexion.end()
       return this.findById(usuarioId)
     } catch (error) {
       throw new Error(error.message)
@@ -151,12 +148,10 @@ export default class Usuarios {
   delete = async (usuarioId) => {
     const strSql = 'DELETE FROM usuarios WHERE usuario_id = ?'
 
-    const conexion = await BdUtils.initConnection()
+    const conexion = await DBConnection.initConnection()
 
     try {
       await conexion.query(strSql, [usuarioId])
-
-      conexion.end()
     } catch (error) {
       throw error
     }
