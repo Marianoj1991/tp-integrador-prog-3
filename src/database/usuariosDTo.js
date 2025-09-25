@@ -1,11 +1,10 @@
 export default class UsuariosDTO {
 
-    constructor(usuarioId, nombreUsuario, apellidoUsuario, tipoUsuario, creado ) {
+    constructor(usuarioId, nombreUsuario, apellidoUsuario, tipoUsuario, modificado ) {
         this.usuarioId = usuarioId;
         this.nombreUsuario = nombreUsuario;
         this.apellidoUsuario = apellidoUsuario;
         this.tipoUsuario = tipoUsuario;
-        this.creado = creado;
         this.modificado = modificado;
     }
 

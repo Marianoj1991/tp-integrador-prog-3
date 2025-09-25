@@ -7,9 +7,10 @@ export default class DBConnection {
   static async initConnection() {
     if (!DBConnection.connection) {
       DBConnection.connection = mysql.createPool({
-        host: 'localhost',
-        user: 'root',
-        database: 'reservas',
+        host: process.env.HOST,
+        user: process.env.USER,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE,
         waitForConnections: true,
         connectionLimit: 10,
         maxIdle: 10,

@@ -1,5 +1,5 @@
-import { allowedColumns } from '../constants'
-import DBConnection from './dbConnection.db'
+import { allowedColumns, allowedDirections } from '../constants/index.js'
+import DBConnection from './dbConnection.db.js'
 
 export default class Usuarios {
   findAll = async (
@@ -9,7 +9,7 @@ export default class Usuarios {
     order = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE activo = 1 AND `
+    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE activo = 1`
 
     const filterValuesArray = []
 
@@ -18,14 +18,14 @@ export default class Usuarios {
         throw new Error('Columna de orden inválida')
       }
 
-      if (!allowedDirections.includes(asc.toUpperCase())) {
+
+      if (!allowedDirections.includes(asc.trim().toUpperCase())) {
         throw new Error('Dirección de orden inválida')
       }
-
       if (filters) {
         for (const filter of filters) {
           for (const clave of Object.keys(filter)) {
-            strSql += `${clave} = ? AND `
+            strSql += ` AND ${clave} = ? AND `
             filterValuesArray.push(filter[clave])
           }
         }
@@ -34,26 +34,32 @@ export default class Usuarios {
       }
 
       if (order) {
-        strSql += ` ORDER BY ${order} ${asc}`
+        strSql += ` ORDER BY ${order} ${asc.trim()}`
       }
 
+      let params = [...filterValuesArray]
+
       if (limit) {
-        strSql += 'LIMIT ? OFFSET ? '
+        strSql += ' LIMIT ? OFFSET ? '
+        filterValuesArray.push(limit, offset)
       }
 
       const conexion = await DBConnection.initConnection()
 
+      console.log('QUERY: ', strSql);
+      console.log('PARAMS: ', params);
+
       const [rows] = await conexion.query(strSql, [
-        ...filterValuesArray,
-        limit,
-        offset
+        params
       ])
 
-      conexion.end()
 
       return rows
     } catch (error) {
-      throw new Error(error.message)
+      console.log('Error catching all users [UsuariosDB][findAll]');
+      console.error('DB error:', error.code, error.sqlMessage);
+  throw error;
+
     }
   }
 
@@ -65,7 +71,7 @@ export default class Usuarios {
     try {
       const [rows] = await conexion.query(strSql, [usuarioId])
 
-      conexion.end()
+      console.log(rows);
 
       return rows.length > 0 ? rows[0] : null
     } catch (error) {
@@ -79,15 +85,15 @@ export default class Usuarios {
     try {
       const conexion = await DBConnection.initConnection()
 
-      const [rows] = await conexion.query(strSql, [nombreUsuario])
+      console.log(strSql);
 
-      conexion.end()
+      const [rows] = await conexion.query(strSql, [nombreUsuario])
 
       return rows.length > 0 ? rows[0] : null
     } catch (error) {
       console.error(`[DB] Error en findByUserName(${nombreUsuario}):`, error)
 
-      throw new Error('No se pudo obtener el usuario por nombre de usuario')
+      throw new Error(error.message)
     }
   }
 
@@ -120,7 +126,6 @@ export default class Usuarios {
       const [rows] = await conexion.query(
         'SELECT LAST_INSERT_ID() AS usuarioId'
       )
-      conexion.end()
       return this.findById(rows[0].usuarioId)
     } catch (error) {
       throw error

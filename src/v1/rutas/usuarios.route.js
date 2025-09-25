@@ -5,14 +5,14 @@ const usuarioController = new UsuariosControllers();
 
 const router = express.Router();
 
-router.get("/usuarios", usuarioController.findAll);
+router.get("/", usuarioController.findAll);
 
-router.get("/usuarios/:usuarioId", usuarioController.findById);
+router.get("/:usuarioId", usuarioController.findById);
 
-router.post("/usuarios", usuarioController.create);
+router.post("/", usuarioController.create);
 
-router.put("/usuarios/:usuarioId", usuarioController.update);
+router.put("/:usuarioId", usuarioController.update);
 
-router.delete("/usuarios/:usuarioId", usuarioController.destroy);
+router.delete("/:usuarioId", usuarioController.destroy);
 
-export { router };
+export default router;

@@ -1,5 +1,6 @@
-import Usuarios from '../database/usuarios.db'
-import UsuariosDTO from '../database/usuariosDTO'
+import Usuarios from '../database/usuarios.db.js'
+import UsuariosDTO from '../database/usuariosDTO.js'
+import hashPassword from '../utils/hashPassword.js'
 
 export default class UsuariosServices {
   constructor() {
@@ -23,17 +24,21 @@ export default class UsuariosServices {
         strAsc
       )
 
+      console.log('DESPUES SERVICIO');
+
+      console.log(tableResults);
+
       const dtoResults = tableResults.map(
         (row) =>
           new UsuariosDTO(
             row['usuario_id'],
-            row['nombre_usuario'],
-            row['apellido_usuario'],
+            row['nombre'],
+            row['apellido'],
             row['tipo_usuario'],
-            row['creado'],
             row['modificado']
           )
       )
+
 
       return dtoResults
     } catch (err) {
@@ -46,8 +51,10 @@ export default class UsuariosServices {
       const row = await this.usuarios.findById(id)
       return new UsuariosDTO(
         row['usuario_id'],
-        row['nombre_usuario'],
-        row['tipo_usuario']
+        row['nombre'],
+        row['apellido'],
+        row['tipo_usuario'],
+        row['modificado']
       )
     } catch (err) {
       throw err
@@ -55,24 +62,36 @@ export default class UsuariosServices {
   }
 
   create = async (usuario) => {
+    const { contrasenia, ...restoUsuario } = usuario
+
+    console.log('SERVICIO', usuario);
+
+    if (!usuario?.contrasenia || typeof usuario.contrasenia !== 'string') {
+      throw new Error('Contraseña inválida')
+    }
+
+    // ENCRIPTACION DE CONTRASENIA
+    const hashedPassword = await hashPassword(contrasenia)
     try {
       const usuarioToInsert = {
-        ...usuario,
+        ...restoUsuario,
+        contrasenia: hashedPassword,
         modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
       }
+
 
       const existingUser = await this.usuarios.findByUserName(
         usuario.nombreUsuario
       )
 
       if (existingUser) {
-        console.error('[UsuariosServices][create] Error:', err)
+        console.error('[UsuariosServices][create] Error:')
         throw new Error(`El usuario ${usuario.nombreUsuario} ya existe`)
       }
 
       return await this.usuarios.create(usuarioToInsert)
-    } catch (err) {
-      throw err
+    } catch (error) {
+      throw error
     }
   }
 
