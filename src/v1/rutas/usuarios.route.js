@@ -1,13 +1,18 @@
-import { Router } from 'express'
+import express from "express";
+import UsuariosControllers from '../../controllers/usuarios.controllers.js';
 
-const router = Router()
+const usuarioController = new UsuariosControllers();
 
-router.get('/', () => {
+const router = express.Router();
 
-})
+router.get("/usuarios", usuarioController.findAll);
 
-export default router
+router.get("/usuarios/:usuarioId", usuarioController.findById);
 
+router.post("/usuarios", usuarioController.create);
 
+router.put("/usuarios/:usuarioId", usuarioController.update);
 
+router.delete("/usuarios/:usuarioId", usuarioController.destroy);
 
+export { router };
