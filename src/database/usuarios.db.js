@@ -1,5 +1,5 @@
-import { allowedColumns } from '../constants'
-import DBConnection from './dbConnection.db'
+import { allowedColumns } from '../constants/index.js'
+import DBConnection from './dbConnection.db.js'
 
 export default class Usuarios {
   findAll = async (

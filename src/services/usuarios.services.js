@@ -1,5 +1,5 @@
-import Usuarios from '../database/usuarios.db'
-import UsuariosDTO from '../database/usuariosDTO'
+import Usuarios from '../database/usuarios.db.js'
+import UsuariosDTO from '../database/usuariosDTO.js'
 
 export default class UsuariosServices {
   constructor() {
