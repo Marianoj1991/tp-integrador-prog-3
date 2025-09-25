@@ -139,7 +139,12 @@ export default class UsuariosControllers {
 
     try {
       await this.usuarios.destroy(usuarioId)
-      res.status(204).json()
+      res.status(200).json({
+        status: 'OK',
+        data: {
+            message: 'Usuario eliminado correctamente'
+        }
+      })
     } catch (error) {
       res
         .status(error?.status || 500)

@@ -97,10 +97,10 @@ export default class UsuariosServices {
 
   update = async (usuarioId, usuario) => {
     try {
-      const existingUser = await this.usuarios.findById(id)
+      const existingUser = await this.usuarios.findById(usuarioId)
 
       if (!existingUser) {
-        console.error('[UsuariosServices][update] Error:', err)
+        console.error('[UsuariosServices][update] Error:')
         throw new Error(`El usuario no existe`)
       }
 
@@ -116,14 +116,14 @@ export default class UsuariosServices {
 
   destroy = async (usuarioId) => {
     try {
-      const existingUser = await this.usuarios.findById(id)
+      const existingUser = await this.usuarios.findById(usuarioId)
 
       if (!existingUser) {
-        console.error('[UsuariosServices][update] Error:', err)
         throw new Error(`El usuario no existe`)
       }
       this.usuarios.delete(usuarioId)
     } catch (err) {
+      console.error(err.message);
       throw err
     }
   }
