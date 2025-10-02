@@ -1,18 +1,22 @@
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import UsersServices from "../services/usuarios.services.js";
+import bcryptjs from 'bcryptjs';
+
 process.loadEnvFile()
 
-//Defino como se validan los usuarios
 const estrategia = new LocalStrategy({
     usernameField: 'nombreUsuario',
     passwordField: 'contrasenia'
 },
-    async (username, password, done) => {
+    async (nombreUsuario, contrasenia, done) => {
         try {
             const service = new UsersServices();
-            const user = await service.find(username, password);
-            if (!user) {
+            const user = await service.findByUserName(nombreUsuario);
+
+            const esPassValido = await bcryptjs.compare(contrasenia, user.contrasenia)
+
+            if (!user || !esPassValido) {
                 return done(null, false, { message: 'Nombre de usuario y/o contraseña incorrectos.' });
             } else {
                 return done(null, user, { message: 'Login correcto!' });
@@ -23,7 +27,6 @@ const estrategia = new LocalStrategy({
     }
 );
 
-//Defino como se validan los tokens
 const validacion = new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET

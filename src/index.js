@@ -19,7 +19,7 @@ passport.use(validacion);
 app.use(passport.initialize());
 
 // ROUTES
-app.use("/api/v1", v1AuthRouter);
+app.use("/api/v1/auth", v1AuthRouter);
 app.use('/api/usuarios', v1Router)
 app.use('/api/v1/usuarios', v1Router)
 

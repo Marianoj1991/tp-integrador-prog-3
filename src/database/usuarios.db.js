@@ -70,7 +70,7 @@ export default class Usuarios {
   }
 
   findByUserName = async (nombreUsuario) => {
-    const strSql = 'SELECT usuario_id FROM usuarios WHERE nombre_usuario = ?'
+    const strSql = 'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
 
     try {
       const conexion = await DBConnection.initConnection()
