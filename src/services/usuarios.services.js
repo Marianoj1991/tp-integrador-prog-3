@@ -42,6 +42,15 @@ export default class UsuariosServices {
     }
   }
 
+  findByUserName = async (nombreUsuario) => {
+      try {
+        const usuario = await this.usuarios.findByUserName(nombreUsuario)
+        return usuario 
+      } catch (error) {
+        throw error
+    }
+  }
+
   findById = async (id) => {
     try {
       const row = await this.usuarios.findById(id)
