@@ -1,18 +1,44 @@
-import express from "express";
-import UsuariosControllers from '../../controllers/usuarios.controllers.js';
+import express from 'express'
 
-const usuarioController = new UsuariosControllers();
+import passport from 'passport'
 
-const router = express.Router();
+import UsuariosControlador from '../../controllers/usuarios.controlador.js'
+import { rolesPermitidos } from '../../middlewares/roles-permitidos.js'
 
-router.get("/", usuarioController.findAll);
+const usuariosControlador = new UsuariosControlador()
 
-router.get("/:usuarioId", usuarioController.findById);
+const router = express.Router()
 
-router.post("/", usuarioController.create);
+router.get('/', usuariosControlador.buscarTodos)
 
-router.put("/:usuarioId", usuarioController.update);
+router.get('/:usuarioId', usuariosControlador.buscarPorId)
 
-router.delete("/:usuarioId", usuarioController.destroy);
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false, failWithError: true }),
+  (err, req, res, next) => {
+    if (err) {
+      return res
+      .status(500)
+      .json({ message: 'Error interno al validar el token' })
+    }
+    
+    if (!req.user) {
+      return res
+      .status(401)
+      .json({ message: req.authInfo?.message || 'Token no autorizado' })
+    }
+    
+    next()
+  },
+  rolesPermitidos('admin'),
+  usuariosControlador.crear
+)
 
-export default router;
+// router.post("/", usuariosControlador.crear);
+
+router.put('/:usuarioId', usuariosControlador.actualizar)
+
+router.delete('/:usuarioId', usuariosControlador.eliminar)
+
+export default router

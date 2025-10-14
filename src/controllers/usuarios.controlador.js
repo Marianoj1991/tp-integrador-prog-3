@@ -1,11 +1,11 @@
-import UsuariosServices from '../services/usuarios.services.js'
+import UsuariosServicios from '../services/usuarios.servicios.js'
 
-export default class UsuariosControllers {
+export default class UsuariosControlador {
   constructor() {
-    this.usuarios = new UsuariosServices()
+    this.usuarios = new UsuariosServicios()
   }
 
-  findAll = async (req, res) => {
+  buscarTodos = async (req, res) => {
     const nombre = req.query.nombre
     const apellido = req.query.apellido
     const tipoUsuario = req.query.tipoUsuario
@@ -22,14 +22,14 @@ export default class UsuariosControllers {
       const pAsc = asc === 'false' ? false : true
       const pTipoUsuario = tipoUsuario ? Number(tipoUsuario) : 3
 
-      const filter = {}
+      const filters = {}
 
-      if (nombre) filter.nombre = nombre
-      if (apellido) filter.apellido = apellido
-      if (tipoUsuario) filter.tipoUsuario = pTipoUsuario
+      if (nombre) filters.nombre = nombre
+      if (apellido) filters.apellido = apellido
+      if (tipoUsuario) filters.tipoUsuario = pTipoUsuario
 
-      const dataUsuarios = await this.usuarios.findAll(
-        filter,
+      const dataUsuarios = await this.usuarios.buscarTodos(
+        filters,
         pLimit,
         pOffset,
         pOrder,
@@ -44,18 +44,16 @@ export default class UsuariosControllers {
     }
   }
 
-  findById = async (req, res) => {
+  buscarPorId = async (req, res) => {
     const usuarioId = Number(req.params.usuarioId)
 
-    console.log('AQUI1')
 
     if (!Number.isInteger(usuarioId)) {
-      console.log('AQUIDENTRO')
       res.status(400).json({ error: 'El parámetro debe ser un número entero' })
     }
 
     try {
-      const usuario = await this.usuarios.findById(usuarioId)
+      const usuario = await this.usuarios.buscarPorId(usuarioId)
 
       res.json({ status: 'OK', data: usuario })
     } catch (error) {
@@ -65,7 +63,7 @@ export default class UsuariosControllers {
     }
   }
 
-  create = async (req, res) => {
+  crear = async (req, res) => {
     const { body } = req
 
     if (
@@ -95,7 +93,7 @@ export default class UsuariosControllers {
 
 
     try {
-      const usuarioCreado = await this.usuarios.create(usuario)
+      const usuarioCreado = await this.usuarios.crear(usuario)
       res.status(201).json({ status: 'OK', data: usuarioCreado })
     } catch (error) {
       res
@@ -104,7 +102,7 @@ export default class UsuariosControllers {
     }
   }
 
-  update = async (req, res) => {
+  actualizar = async (req, res) => {
     const body = req.body
     const usuarioId = req.params.usuarioId
 
@@ -118,7 +116,7 @@ export default class UsuariosControllers {
     }
 
     try {
-      const usuarioActualizado = await this.usuarios.update(usuarioId, body)
+      const usuarioActualizado = await this.usuarios.actualizar(usuarioId, body)
       res.status(200).json(usuarioActualizado)
     } catch (error) {
       res
@@ -127,7 +125,7 @@ export default class UsuariosControllers {
     }
   }
 
-  destroy = async (req, res) => {
+  eliminar = async (req, res) => {
     const usuarioId = req.params.usuarioId
 
     if (!usuarioId) {
@@ -138,7 +136,7 @@ export default class UsuariosControllers {
     }
 
     try {
-      await this.usuarios.destroy(usuarioId)
+      await this.usuarios.eliminar(usuarioId)
       res.status(200).json({
         status: 'OK',
         data: {

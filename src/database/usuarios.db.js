@@ -1,30 +1,32 @@
 import { allowedColumns, allowedDirections } from '../constants/index.js'
 import DBConnection from './dbConnection.db.js'
 
-export default class Usuarios {
-  findAll = async (
+export default class UsuariosDB {
+  buscarTodos = async (
     filters = null,
     limit = 0,
     offset = 0,
-    order = 'usuario_id',
+    orderBy = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE activo = 1`
+    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado, activo FROM usuarios WHERE activo = 1 `
 
     const filterValuesArray = []
 
     try {
-      if (!allowedColumns.includes(order)) {
+      if (!allowedColumns.includes(orderBy.trim())) {
         throw new Error('Columna de orden inválida')
       }
 
       if (!allowedDirections.includes(asc.trim().toUpperCase())) {
         throw new Error('Dirección de orden inválida')
       }
+
       if (filters) {
+        strSql += 'AND '
         for (const filter of filters) {
           for (const clave of Object.keys(filter)) {
-            strSql += ` AND ${clave} = ? AND `
+            strSql += `${clave} = ? AND `
             filterValuesArray.push(filter[clave])
           }
         }
@@ -32,11 +34,9 @@ export default class Usuarios {
         strSql = strSql.substring(0, strSql.length - 4)
       }
 
-      if (order) {
-        strSql += ` ORDER BY ${order} ${asc.trim()}`
+      if (orderBy) {
+        strSql += `ORDER BY ${orderBy} ${asc.trim()}`
       }
-
-      let params = [...filterValuesArray]
 
       if (limit) {
         strSql += ' LIMIT ? OFFSET ? '
@@ -45,18 +45,18 @@ export default class Usuarios {
 
       const conexion = await DBConnection.initConnection()
 
-      const [rows] = await conexion.query(strSql, [params])
+      const [rows] = await conexion.query(strSql, filterValuesArray)
 
       return rows
     } catch (error) {
-      console.log('Error catching all users [UsuariosDB][findAll]')
+      console.log('[DB] Error en buscarTodos')
       console.error('DB error:', error.code, error.sqlMessage)
       throw error
     }
   }
 
-  findById = async (usuarioId) => {
-    const strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado FROM usuarios WHERE usuario_id = ?`
+  buscarPorId = async (usuarioId) => {
+    const strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE usuario_id = ?`
 
     const conexion = await DBConnection.initConnection()
 
@@ -65,12 +65,14 @@ export default class Usuarios {
 
       return rows.length > 0 ? rows[0] : null
     } catch (error) {
+      console.log('[DB] Error en buscarPorId')
       throw error
     }
   }
 
-  findByUserName = async (nombreUsuario) => {
-    const strSql = 'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
+  buscarPorNombreUsuario = async (nombreUsuario) => {
+    const strSql =
+      'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
 
     try {
       const conexion = await DBConnection.initConnection()
@@ -85,7 +87,7 @@ export default class Usuarios {
     }
   }
 
-  create = async ({
+  crear = async ({
     nombre,
     apellido,
     nombreUsuario,
@@ -114,13 +116,13 @@ export default class Usuarios {
       const [rows] = await conexion.query(
         'SELECT LAST_INSERT_ID() AS usuarioId'
       )
-      return this.findById(rows[0].usuarioId)
+      return this.buscarPorId(rows[0].usuarioId)
     } catch (error) {
       throw error
     }
   }
 
-  update = async (usuarioId, campos) => {
+  actualizar = async (usuarioId, campos) => {
     const conexion = await DBConnection.initConnection()
 
     try {
@@ -139,14 +141,14 @@ export default class Usuarios {
 
       await conexion.query(strSql, [...valores, usuarioId])
 
-      return this.findById(usuarioId)
+      return this.buscarPorId(usuarioId)
     } catch (error) {
       throw new Error(error.message)
     }
   }
 
-  delete = async (usuarioId) => {
-    const strSql = 'DELETE FROM usuarios WHERE usuario_id = ?'
+  eliminar = async (usuarioId) => {
+    const strSql = 'UPDATE usuarios SET activo = 0 WHERE usuario_id = ?'
 
     const conexion = await DBConnection.initConnection()
 
