@@ -18,7 +18,7 @@ export default class UsuariosServicios {
     const strAsc = asc ? 'ASC ' : 'DESC '
 
     try {
-      const tableResults = await this.usuarios.buscarTodos(
+      const usuariosDbResultados = await this.usuarios.buscarTodos(
         sqlFilter,
         limit,
         offset,
@@ -26,7 +26,7 @@ export default class UsuariosServicios {
         strAsc
       )
 
-      const dtoResults = tableResults.map(
+      const dtoResultados = usuariosDbResultados.map(
         (row) =>
           new UsuariosDTO(
             row['usuario_id'],
@@ -38,7 +38,7 @@ export default class UsuariosServicios {
           )
       )
 
-      return dtoResults
+      return dtoResultados
     } catch (err) {
       throw err
     }
@@ -144,7 +144,7 @@ export default class UsuariosServicios {
 
   eliminar = async (usuarioId) => {
     try {
-      const existeUsuario = await this.users.findById(usuarioId)
+      const existeUsuario = await this.usuarios.buscarPorId(usuarioId)
 
       if (!existeUsuario) {
         throw new Error(`El usuario no existe`)
