@@ -1,64 +1,93 @@
-import DBConnection from './dbConnection.db'
+import { allowedColumns, allowedDirections } from '../constants/index.js'
+import DBConnection from './dbConnection.db.js'
 
-export default class Usuarios {
-  findAll = async (
+export default class UsuariosDB {
+  buscarTodos = async (
     filters = null,
     limit = 0,
     offset = 0,
-    order = 'usuario_id',
+    orderBy = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, modificado FROM usuarios `
+    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado, activo FROM usuarios WHERE activo = 1 `
 
     const filterValuesArray = []
 
-    if (filters) {
-      strSql += 'WHERE '
-
-      for (const filter of filters) {
-        for (const clave of Object.keys(filter)) {
-          strSql += `${clave} = ? AND `
-          filterValuesArray.push(filter[clave])
-        }
+    try {
+      if (!allowedColumns.includes(orderBy.trim())) {
+        throw new Error('Columna de orden inválida')
       }
 
-      strSql = strSql.substring(0, strSql.length - 4)
-    }
+      if (!allowedDirections.includes(asc.trim().toUpperCase())) {
+        throw new Error('Dirección de orden inválida')
+      }
 
-    if (order) {
-      strSql += ` ORDER BY ${order} ${asc}`
-    }
+      if (filters) {
+        strSql += 'AND '
+        for (const filter of filters) {
+          for (const clave of Object.keys(filter)) {
+            strSql += `${clave} = ? AND `
+            filterValuesArray.push(filter[clave])
+          }
+        }
 
-    if (limit) {
-      strSql += 'LIMIT ? OFFSET ? '
+        strSql = strSql.substring(0, strSql.length - 4)
+      }
+
+      if (orderBy) {
+        strSql += `ORDER BY ${orderBy} ${asc.trim()}`
+      }
+
+      if (limit) {
+        strSql += ' LIMIT ? OFFSET ? '
+        filterValuesArray.push(limit, offset)
+      }
+
+      const conexion = await DBConnection.initConnection()
+
+      const [rows] = await conexion.query(strSql, filterValuesArray)
+
+      return rows
+    } catch (error) {
+      console.log('[DB] Error en buscarTodos')
+      console.error('DB error:', error.code, error.sqlMessage)
+      throw error
     }
+  }
+
+  buscarPorId = async (usuarioId) => {
+    const strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE usuario_id = ?`
 
     const conexion = await DBConnection.initConnection()
 
-    const [rows] = await conexion.query(strSql, [
-      ...filterValuesArray,
-      limit,
-      offset
-    ])
+    try {
+      const [rows] = await conexion.query(strSql, [usuarioId])
 
-    conexion.end()
-
-    return rows
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      console.log('[DB] Error en buscarPorId')
+      throw error
+    }
   }
 
-  findById = async (usuarioId) => {
-    const strSql = `SELECT usuario_id, nombre, apellido, modificado FROM usuarios WHERE usuario_id = ?`
+  buscarPorNombreUsuario = async (nombreUsuario) => {
+    const strSql =
+      'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
 
-    const conexion = await BdUtils.initConnection()
+    try {
+      const conexion = await DBConnection.initConnection()
 
-    const [rows] = await conexion.query(strSql, [usuarioId])
+      const [rows] = await conexion.query(strSql, [nombreUsuario])
 
-    conexion.end()
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      console.error(`[DB] Error en findByUserName(${nombreUsuario}):`, error)
 
-    return rows.length > 0 ? rows[0] : null
+      throw new Error(error.message)
+    }
   }
 
-  create = async ({
+  crear = async ({
     nombre,
     apellido,
     nombreUsuario,
@@ -71,19 +100,9 @@ export default class Usuarios {
     const strSql =
       'INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);'
 
-    const strSqlVerificar =
-      'SELECT usuario_id FROM usuarios WHERE nombre_usuario = ?'
-
     const conexion = await DBConnection.initConnection()
 
     try {
-      const [rowsVerificar] = await conexion.query(strSqlVerificar, [
-        nombreUsuario
-      ])
-
-      if (rowsVerificar.length > 0) {
-        throw new Error('El nombre de usuario ya existe')
-      }
       await conexion.query(strSql, [
         nombre,
         apellido,
@@ -97,15 +116,14 @@ export default class Usuarios {
       const [rows] = await conexion.query(
         'SELECT LAST_INSERT_ID() AS usuarioId'
       )
-      return this.findById(rows[0].usuarioId)
+      return this.buscarPorId(rows[0].usuarioId)
     } catch (error) {
-    } finally {
-      conexion.end()
+      throw error
     }
   }
 
-  update = async (usuarioId, campos) => {
-    const conexion = await BdUtils.initConnection()
+  actualizar = async (usuarioId, campos) => {
+    const conexion = await DBConnection.initConnection()
 
     try {
       const entradas = Object.entries(campos).filter(
@@ -119,25 +137,25 @@ export default class Usuarios {
       const setClause = entradas.map(([campo]) => `${campo} = ?`).join(', ')
       const valores = entradas.map(([_, valor]) => valor)
 
-      const strSql = `UPDATE usuarios SET ${setClause} WHERE actor_id = ?`
+      const strSql = `UPDATE usuarios SET ${setClause} WHERE usuario_id = ?`
 
       await conexion.query(strSql, [...valores, usuarioId])
 
-      return this.findById(usuarioId) }
-    catch (error){
+      return this.buscarPorId(usuarioId)
+    } catch (error) {
       throw new Error(error.message)
-    } finally {
-      conexion.end()
     }
   }
 
-  destroy = async (usuarioId) => {
-    const strSql = 'DELETE FROM usuarios WHERE usuario_id = ?'
+  eliminar = async (usuarioId) => {
+    const strSql = 'UPDATE usuarios SET activo = 0 WHERE usuario_id = ?'
 
-    const conexion = await BdUtils.initConnection()
+    const conexion = await DBConnection.initConnection()
 
-    await conexion.query(strSql, [usuarioId])
-
-    conexion.end()
+    try {
+      await conexion.query(strSql, [usuarioId])
+    } catch (error) {
+      throw error
+    }
   }
 }
