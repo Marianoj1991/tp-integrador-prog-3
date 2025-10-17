@@ -32,7 +32,7 @@ router.post(
 
     next()
   },
-  rolesPermitidos('admin', 'empleado'),
+  rolesPermitidos('admin'),
   crearUsuariosValidaciones,
   validarCampos,
   usuariosControlador.crear
