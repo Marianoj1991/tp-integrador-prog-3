@@ -85,7 +85,7 @@ export default class UsuariosControlador {
       apellido: body.apellido,
       nombreUsuario: body.nombreUsuario,
       contrasenia: body.contrasenia,
-      tipoUsuario: 3,
+      tipoUsuario: body.tipoUsuario || 3,
       celular: body.celular ? body.celular : '',
       foto: body.foto ? body.foto : '',
       activo: 1

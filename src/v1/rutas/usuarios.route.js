@@ -32,7 +32,7 @@ router.post(
 
     next()
   },
-  rolesPermitidos('admin', 'empleado'),
+  rolesPermitidos('admin'),
   crearUsuariosValidaciones,
   validarCampos,
   usuariosControlador.crear
@@ -42,6 +42,23 @@ router.post(
 
 router.put(
   '/:usuarioId',
+  passport.authenticate('jwt', { session: false, failWithError: true }),
+  (err, req, res, next) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: 'Error interno al validar el token' })
+    }
+
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ message: req.authInfo?.message || 'Token no autorizado' })
+    }
+
+    next()
+  },
+  rolesPermitidos('admin'),
   actualizarUsuarioValidaciones,
   validarCampos,
   usuariosControlador.actualizar
