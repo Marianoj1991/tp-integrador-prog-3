@@ -14,8 +14,7 @@ export const crearServiciosValidaciones  = [
       .withMessage('El importe debe ser un número'),
 
     body('activo')
-      .notEmpty()
-      .withMessage('El estado activo es obligatorio')
+      .optional()
       .isNumeric()
       .withMessage('El estado activo debe ser un número')
 

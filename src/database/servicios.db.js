@@ -1,4 +1,4 @@
-import { allowedColumns, allowedDirections } from '../constants/index.js'
+import { allowedDirections } from '../constants/index.js'
 import DBConnection from './dbConnection.db.js'
 
 export default class ServiciosDB {
@@ -14,9 +14,6 @@ export default class ServiciosDB {
     const filterValuesArray = []
 
     try {
-      if (!allowedColumns.includes(orderBy.trim())) {
-        throw new Error('Columna de orden inválida')
-      }
 
       if (!allowedDirections.includes(asc.trim().toUpperCase())) {
         throw new Error('Dirección de orden inválida')
@@ -44,13 +41,27 @@ export default class ServiciosDB {
       }
 
       const conexion = await DBConnection.initConnection()
-
+      console.log('SQL Query:', strSql)
       const [rows] = await conexion.query(strSql, filterValuesArray)
 
       return rows
     } catch (error) {
       console.log('[DB] Error en buscarTodos')
       console.error('DB error:', error.code, error.sqlMessage)
+      throw error
+    }
+
+  }
+
+  buscarPorDescripcion = async (descripcion) => {
+    const strSql = `SELECT servicio_id, descripcion, importe, activo, creado, modificado FROM servicios WHERE descripcion = ?`
+
+    const conexion = await DBConnection.initConnection()
+    try {
+      const [rows] = await conexion.query(strSql, [descripcion])
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      console.log('[DB] Error en buscarPorDescripcion')
       throw error
     }
   }
@@ -79,13 +90,14 @@ export default class ServiciosDB {
       'INSERT INTO servicios (descripcion, importe, activo) VALUES (?, ?, ?);'
 
     const conexion = await DBConnection.initConnection()
-
+    console.log(descripcion, importe, activo)
     try {
       await conexion.query(strSql, [
         descripcion,
         importe,
         activo
       ])
+      
       const [rows] = await conexion.query(
         'SELECT LAST_INSERT_ID() AS servicioId'
       )

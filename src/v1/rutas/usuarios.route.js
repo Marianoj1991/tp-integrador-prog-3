@@ -14,7 +14,7 @@ router.get('/', usuariosControlador.buscarTodos)
 
 router.get('/:usuarioId', usuariosControlador.buscarPorId)
 
-router.post(
+/*router.post(
   '/',
   passport.authenticate('jwt', { session: false, failWithError: true }),
   (err, req, res, next) => {
@@ -37,8 +37,8 @@ router.post(
   validarCampos,
   usuariosControlador.crear
 )
-
-// router.post("/", usuariosControlador.crear);
+*/
+router.post("/", usuariosControlador.crear);
 
 router.put(
   '/:usuarioId',

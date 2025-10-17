@@ -60,7 +60,6 @@ export default class Servicios {
 
   crear = async (servicio) => {
     const { descripcion, importe, ...restoServicio } = servicio
-
     if (!descripcion || typeof descripcion !== 'string') {
       throw new Error('Descripción inválida')
     }
@@ -71,6 +70,8 @@ export default class Servicios {
 
     try {
       const servicioToInsert = {
+        descripcion,
+        importe,
         ...restoServicio,
         modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
       }
@@ -84,6 +85,7 @@ export default class Servicios {
         throw new Error(`El servicio ${servicio.descripcion} ya existe`)
       }
 
+      console.log("Error aqui")
       const result = await this.servicios.crear(servicioToInsert)
 
       return new ServiciosDTO(
