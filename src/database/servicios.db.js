@@ -41,7 +41,6 @@ export default class ServiciosDB {
       }
 
       const conexion = await DBConnection.initConnection()
-      console.log('SQL Query:', strSql)
       const [rows] = await conexion.query(strSql, filterValuesArray)
 
       return rows
