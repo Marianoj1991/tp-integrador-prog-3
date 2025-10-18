@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import v1Router from './v1/rutas/usuarios.route.js';
+import usuariosV1Router from './v1/rutas/usuarios.route.js';
 import serviciosRouter from './v1/rutas/servicios.route.js';
 import passport from 'passport';
 import v1AuthRouter from './v1/rutas/auth.route.js';
@@ -21,8 +21,8 @@ app.use(passport.initialize());
 
 // ROUTES
 app.use("/api/v1/auth", v1AuthRouter);
-app.use('/api/usuarios', v1Router)
-app.use('/api/v1/usuarios', v1Router)
+app.use('/api/usuarios', usuariosV1Router)
+app.use('/api/v1/usuarios', usuariosV1Router)
 app.use('/api/v1/protected', passport.authenticate('jwt', {session: false}), (req, res) => {
   res.json({message:'Authorized', user: req.user})
 })

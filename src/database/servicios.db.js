@@ -82,20 +82,20 @@ export default class ServiciosDB {
   }
 
   crear = async ({
-    descripcion,
-    importe,
-    activo = 1
+    bDescripcion,
+    bImporte,
+    bActivo = 1
   }) => {
     const strSql =
       'INSERT INTO servicios (descripcion, importe, activo) VALUES (?, ?, ?);'
 
     const conexion = await DBConnection.initConnection()
-    console.log(descripcion, importe, activo)
+    console.log(bDescripcion, bImporte, bActivo)
     try {
       await conexion.query(strSql, [
-        descripcion,
-        importe,
-        activo
+        bDescripcion,
+        bImporte,
+        bActivo
       ])
       
       const [rows] = await conexion.query(

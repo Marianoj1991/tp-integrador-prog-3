@@ -62,7 +62,11 @@ export default class ServiciosControlador {
 
   crear = async (req, res) => {
     const { body } = req
-
+    const bDescripcion = body.descripcion 
+    ? body.descripcion.trim() : ''
+    const bImporte = body.importe ? body.importe : 0 
+    const bActivo = body.activo ? body.activo : 0
+    
     if (
       !body.descripcion ||
       !body.importe 
@@ -75,12 +79,12 @@ export default class ServiciosControlador {
         }
       })
     }
-    const servicio = {
-      descripcion: body.descripcion,
-      importe: body.importe,
-      activo: 1
-    }
 
+    const servicio = {
+      bDescripcion,
+      bImporte,
+      bActivo
+    }
 
     try {
       const servicioCreado = await this.servicios.crear(servicio)

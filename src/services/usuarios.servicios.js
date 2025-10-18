@@ -120,10 +120,6 @@ export default class UsuariosServicios {
         throw new Error(`El usuario no existe`)
       }
 
-      if (Number(existeUsuario.activo) === 0) {
-        throw new Error(`El usuario se encuentra inactivo`)
-      }
-
       const datosNuevos = {
         ...datos,
         modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')

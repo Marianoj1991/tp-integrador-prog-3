@@ -59,34 +59,34 @@ export default class Servicios {
   }
 
   crear = async (servicio) => {
-    const { descripcion, importe, ...restoServicio } = servicio
-    if (!descripcion || typeof descripcion !== 'string') {
+    const { bDescripcion, bImporte, ...restoServicio } = servicio
+    if (!bDescripcion|| typeof bDescripcion !== 'string') {
       throw new Error('Descripción inválida')
     }
 
-    if (!importe || typeof importe !== 'number') {
+    if (!bImporte || typeof bImporte !== 'number') {
       throw new Error('Importe inválido')
     }
 
     try {
       const servicioToInsert = {
-        descripcion,
-        importe,
+        bDescripcion,
+        bImporte,
         ...restoServicio,
         modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
       }
 
       const existeServicio = await this.servicios.buscarPorDescripcion(
-        servicio.descripcion
+        bDescripcion
       )
 
       if (existeServicio) {
         console.error('[Servicios][crear] Error:')
-        throw new Error(`El servicio ${servicio.descripcion} ya existe`)
+        throw new Error(`El servicio ${bDescripcion} ya existe`)
       }
 
-      console.log("Error aqui")
       const result = await this.servicios.crear(servicioToInsert)
+
 
       return new ServiciosDTO(
         result['servicios_id'],
@@ -107,10 +107,6 @@ export default class Servicios {
       if (!existeServicio) {
         console.error('[Servicios][actualizar] Error:')
         throw new Error(`El servicio no existe`)
-      }
-
-      if (Number(existeServicio.activo) === 0) {
-        throw new Error(`El servicio se encuentra inactivo`)
       }
 
       const datosNuevos = {
