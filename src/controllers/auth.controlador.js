@@ -19,10 +19,22 @@ export default class AuthControlador {
           res.send(err)
         }
         const { contrasenia, ...restoUsuario } = user
-    
-        const usuarioDTO = new UsuariosDTO(restoUsuario.usuario_id, restoUsuario.nombre, restoUsuario.apellido, restoUsuario.tipo_usuario, restoUsuario.modificado, restoUsuario.activo)
 
-        const token = jwt.sign({...usuarioDTO}, process.env.JWT_SECRET, {
+        const { usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, modificado, activo, celular, foto } = restoUsuario
+        const dataUsuarioToken = new UsuariosDTO(
+          usuario_id,
+          nombre,
+          apellido,
+          nombre_usuario,
+          tipo_usuario,
+          modificado, 
+          activo,
+          celular,
+          foto
+        )
+
+
+        const token = jwt.sign({...dataUsuarioToken}, process.env.JWT_SECRET, {
           expiresIn: '1h'
         })
 

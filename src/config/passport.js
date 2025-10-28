@@ -37,9 +37,9 @@ const validacion = new JwtStrategy(
   },
   async (jwtPayload, done) => {
     try {
-      const service = new UsuariosServicios()
-      const usuario = await service.buscarPorId(jwtPayload.usuarioId)
-      
+      const servicio = new UsuariosServicios()
+      const usuario = await servicio.buscarPorId(jwtPayload.usuarioId)     
+
       if (usuario) {
         return done(null, usuario)
       } else {

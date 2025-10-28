@@ -9,7 +9,7 @@ export default class UsuariosDB {
     orderBy = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado, activo FROM usuarios WHERE activo = 1 `
+    let strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE activo = 1 `
 
     const filterValuesArray = []
 
@@ -53,6 +53,24 @@ export default class UsuariosDB {
       console.error('DB error:', error.code, error.sqlMessage)
       throw error
     }
+  }
+
+  buscarTodosClientes = async () => {
+
+    const strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE tipo_usuario = 3`
+
+    const conexion = await DBConnection.initConnection()
+    
+    try {
+
+      const [rows] = await conexion.query(strSql)
+
+      return rows.length > 0 ? rows : null
+    } catch (error) {
+      console.log('[DB] Error en buscarTodosClientes')
+      throw error
+    }
+
   }
 
   buscarPorId = async (usuarioId) => {

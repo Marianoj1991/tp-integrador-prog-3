@@ -53,7 +53,7 @@ export const actualizarUsuarioValidaciones = [
       .notEmpty()
       .withMessage('El apellido no puede estar vacío'),
 
-    body('nombre_usuario')
+    body('nombreUsuario')
       .optional()
       .isEmail()
       .withMessage('Debe ser un email válido'),

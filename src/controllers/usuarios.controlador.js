@@ -44,9 +44,19 @@ export default class UsuariosControlador {
     }
   }
 
+  buscarTodosClientes = async (req, res) => {
+    try {
+      const clientes = await this.usuarios.buscarTodosClientes()
+
+      res.json({ status: 'OK', data: clientes })
+    } catch (err) {
+      console.log('ERROR en buscarTodosClientes', err)
+      throw err
+    }
+  }
+
   buscarPorId = async (req, res) => {
     const usuarioId = Number(req.params.usuarioId)
-
 
     if (!Number.isInteger(usuarioId)) {
       res.status(400).json({ error: 'El parámetro debe ser un número entero' })
@@ -90,7 +100,6 @@ export default class UsuariosControlador {
       foto: body.foto ? body.foto : '',
       activo: 1
     }
-
 
     try {
       const usuarioCreado = await this.usuarios.crear(usuario)
@@ -140,7 +149,7 @@ export default class UsuariosControlador {
       res.status(200).json({
         status: 'OK',
         data: {
-            message: 'Usuario eliminado correctamente'
+          message: 'Usuario eliminado correctamente'
         }
       })
     } catch (error) {

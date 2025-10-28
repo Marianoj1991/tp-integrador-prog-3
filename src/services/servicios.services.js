@@ -28,11 +28,12 @@ export default class Servicios {
       const dtoResultados = serviciosDbResultados.map(
         (row) =>
           new ServiciosDTO(
-            row['servicios_id'],
+            row['servicio_id'],
             row['descripcion'],
             row['importe'],
+            row['activo'],
+            row['creado'],
             row['modificado'],
-            row['activo']
           )
       )
 

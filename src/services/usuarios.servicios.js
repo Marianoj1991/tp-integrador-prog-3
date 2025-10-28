@@ -32,9 +32,12 @@ export default class UsuariosServicios {
             row['usuario_id'],
             row['nombre'],
             row['apellido'],
+            row['nombre_usuario'],
             row['tipo_usuario'],
             row['modificado'],
-            row['activo']
+            row['activo'],
+            row['celular'],
+            row['foto']
           )
       )
 
@@ -44,11 +47,33 @@ export default class UsuariosServicios {
     }
   }
 
+  buscarTodosClientes = async () => {
+    try {
+      const rows = await this.usuarios.buscarTodosClientes()
+
+      return (rows ?? []).map(
+        (row) =>
+          new UsuariosDTO(
+            row['usuario_id'],
+            row['nombre'],
+            row['apellido'],
+            row['nombre_usuario'],
+            row['tipo_usuario'],
+            row['modificado'],
+            row['activo'],
+            row['celular'],
+            row['foto']
+          )
+      )
+    } catch (error) {
+      console.log('ERROR en buscarTodosClientes ')
+      throw error
+    }
+  }
+
   buscarPorNombreUsuario = async (nombreUsuario) => {
     try {
-      const usuario = await this.usuarios.buscarPorNombreUsuario(nombreUsuario)
-
-      return usuario
+      return await this.usuarios.buscarPorNombreUsuario(nombreUsuario)
     } catch (error) {
       throw error
     }
@@ -56,16 +81,19 @@ export default class UsuariosServicios {
 
   buscarPorId = async (id) => {
     try {
-      const row = await this.usuarios.buscarPorId(id)
+      const usuario = await this.usuarios.buscarPorId(id)
 
-      return new UsuariosDTO(
-        row['usuario_id'],
-        row['nombre'],
-        row['apellido'],
-        row['tipo_usuario'],
-        row['modificado'],
-        row['activo']
-      )
+      return usuario ? new UsuariosDTO(
+        usuario['usuario_id'],
+        usuario['nombre'],
+        usuario['apellido'],
+        usuario['nombre_usuario'],
+        usuario['tipo_usuario'],
+        usuario['modificado'],
+        usuario['activo'],
+        usuario['celular'],
+        usuario['foto']
+      ) : null
     } catch (err) {
       throw err
     }
@@ -102,9 +130,12 @@ export default class UsuariosServicios {
         result['usuario_id'],
         result['nombre'],
         result['apellido'],
+        result['nombre_usuario'],
         result['tipo_usuario'],
         result['modificado'],
-        result['activo']
+        result['activo'],
+        result['celular'],
+        result['foto']
       )
     } catch (error) {
       throw error
@@ -120,19 +151,28 @@ export default class UsuariosServicios {
         throw new Error(`El usuario no existe`)
       }
 
-      const datosNuevos = {
-        ...datos,
-        modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
-      }
-
-      const datosDB = UsuariosDTO.toDBFields(datosNuevos).reduce((acc, act) => {
+      const datosDB = UsuariosDTO.toDBFields(datos).reduce((acc, act) => {
         return {
           ...acc,
           ...act
         }
       }, {})
 
-      return this.usuarios.actualizar(usuarioId, datosDB)
+      console.log(datosDB);
+
+      const usuarioActualizado = await this.usuarios.actualizar(usuarioId, datosDB)
+
+        return new UsuariosDTO(
+          usuarioActualizado['usuario_id'],
+          usuarioActualizado['nombre'],
+          usuarioActualizado['apellido'],
+          usuarioActualizado['nombre_usuario'],
+          usuarioActualizado['tipo_usuario'],
+          usuarioActualizado['modificado'],
+          usuarioActualizado['activo'],
+          usuarioActualizado['celular'],
+          usuarioActualizado['foto']
+        )
     } catch (err) {
       throw err
     }
