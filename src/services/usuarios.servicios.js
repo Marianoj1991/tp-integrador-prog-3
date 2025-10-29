@@ -106,13 +106,11 @@ export default class UsuariosServicios {
       throw new Error('Contraseña inválida')
     }
 
-    // ENCRIPTACION DE CONTRASENIA
     const hashedPassword = await hashPassword(contrasenia)
     try {
-      const usuarioToInsert = {
+      const usuarioNuevo = {
         ...restoUsuario,
-        contrasenia: hashedPassword,
-        modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
+        contrasenia: hashedPassword
       }
 
       const existeUsuario = await this.usuarios.buscarPorNombreUsuario(
@@ -124,18 +122,18 @@ export default class UsuariosServicios {
         throw new Error(`El usuario ${usuario.nombreUsuario} ya existe`)
       }
 
-      const result = await this.usuarios.crear(usuarioToInsert)
+      const nuevoUsuario = await this.usuarios.crear(usuarioNuevo)
 
       return new UsuariosDTO(
-        result['usuario_id'],
-        result['nombre'],
-        result['apellido'],
-        result['nombre_usuario'],
-        result['tipo_usuario'],
-        result['modificado'],
-        result['activo'],
-        result['celular'],
-        result['foto']
+        nuevoUsuario['usuario_id'],
+        nuevoUsuario['nombre'],
+        nuevoUsuario['apellido'],
+        nuevoUsuario['nombre_usuario'],
+        nuevoUsuario['tipo_usuario'],
+        nuevoUsuario['modificado'],
+        nuevoUsuario['activo'],
+        nuevoUsuario['celular'],
+        nuevoUsuario['foto']
       )
     } catch (error) {
       throw error
@@ -157,8 +155,6 @@ export default class UsuariosServicios {
           ...act
         }
       }, {})
-
-      console.log(datosDB);
 
       const usuarioActualizado = await this.usuarios.actualizar(usuarioId, datosDB)
 

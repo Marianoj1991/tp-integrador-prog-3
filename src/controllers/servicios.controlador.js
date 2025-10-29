@@ -111,7 +111,7 @@ export default class ServiciosControlador {
 
     try {
       const servicioActualizado = await this.servicios.actualizar(servicioId, body)
-      res.status(200).json(servicioActualizado)
+      res.status(200).json({ status: 'OK', data: servicioActualizado})
     } catch (error) {
       res
         .status(error?.status || 500)

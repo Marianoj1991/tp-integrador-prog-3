@@ -1,9 +1,14 @@
-import jwt from 'jsonwebtoken'
+
 import passport from 'passport'
 import UsuariosDTO from '../database/usuariosDTO.js'
+import UsuariosServicios from '../services/usuarios.servicios.js'
+import { crearToken } from '../utils/crearToken.js'
 process.loadEnvFile()
 
 export default class AuthControlador {
+  constructor() {
+    this.usuarios = new UsuariosServicios()
+  }
 
   login = async (req, res) => {
     passport.authenticate('local', { session: false }, (err, user, info) => {
@@ -20,23 +25,30 @@ export default class AuthControlador {
         }
         const { contrasenia, ...restoUsuario } = user
 
-        const { usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, modificado, activo, celular, foto } = restoUsuario
+        const {
+          usuario_id,
+          nombre,
+          apellido,
+          nombre_usuario,
+          tipo_usuario,
+          modificado,
+          activo,
+          celular,
+          foto
+        } = restoUsuario
         const dataUsuarioToken = new UsuariosDTO(
           usuario_id,
           nombre,
           apellido,
           nombre_usuario,
           tipo_usuario,
-          modificado, 
+          modificado,
           activo,
           celular,
           foto
         )
 
-
-        const token = jwt.sign({...dataUsuarioToken}, process.env.JWT_SECRET, {
-          expiresIn: '1h'
-        })
+        const token = crearToken(dataUsuarioToken)
 
         return res.json({ token })
       })
@@ -44,6 +56,9 @@ export default class AuthControlador {
   }
 
   signUp = async (req, res) => {
+
+    const { body } = req
+
     if (
       !body.nombre ||
       !body.apellido ||
@@ -70,8 +85,11 @@ export default class AuthControlador {
     }
 
     try {
-      const usuarioCreado = await this.usuarios.create(usuario)
-      res.status(201).json({ status: 'OK', data: usuarioCreado })
+      const usuarioCreado = await this.usuarios.crear(usuario)
+
+      const token = crearToken(usuarioCreado)
+
+      res.status(201).json({ status: 'OK', data: usuarioCreado, token })
     } catch (error) {
       res
         .status(error?.status || 500)

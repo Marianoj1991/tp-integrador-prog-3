@@ -29,9 +29,6 @@ app.use('/api/servicios', RouterServiciosV1)
 app.use('/api/v1/servicios', RouterServiciosV1)
 app.use('/api/salones', RouterSalonesV1)
 app.use('/api/v1/salones', RouterSalonesV1)
-app.use('/api/protected', passport.authenticate('jwt', {session: false}), (req, res) => {
-  res.json({message:'Authorized', user: req.user})
-})
 
 app.listen(port, () => console.log(`Server listening on port: ${port}. To close server press Ctrl + C`))
 
