@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import usuariosV1Router from './v1/rutas/usuarios.route.js';
 import serviciosRouter from './v1/rutas/servicios.route.js';
+import turnosRouter from './v1/rutas/shifts.route.js';
 import passport from 'passport';
 import v1AuthRouter from './v1/rutas/auth.route.js';
 import { estrategia, validacion } from './config/passport.js';
@@ -28,6 +29,7 @@ app.use('/api/v1/protected', passport.authenticate('jwt', {session: false}), (re
 })
 app.use('/api/servicios', serviciosRouter)
 app.use('/api/v1/servicios', serviciosRouter)
-
+app.use('/api/v1/shifts', turnosRouter)
+app.use('/api/turnos', turnosRouter)
 app.listen(port, () => console.log(`Server listening on port: ${port}. To close server press Ctrl + C`))
 

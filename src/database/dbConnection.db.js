@@ -8,6 +8,7 @@ export default class DBConnection {
     if (!DBConnection.connection) {
       DBConnection.connection = mysql.createPool({
         host: process.env.HOST,
+        port: process.env.DB_PORT, // 🟢 Puerto agregado desde el .env
         user: process.env.USER,
         password: process.env.PASSWORD,
         database: process.env.DATABASE,
