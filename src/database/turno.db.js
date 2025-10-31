@@ -1,9 +1,9 @@
-import ShiftsDTO from './shiftsDTO.js'; 
+import ShiftsDTO from './turnoDTO.js'; 
 import { allowedDirections } from '../constants/index.js'; 
 import DBConnection from './dbConnection.db.js'; 
 
-const FIELDS = 't.turno_id, t.servicio_id, t.cliente_id, t.hora_inicio, t.duracion_minutos, t.estado, t.notas, t.creado, t.modificado';
-const TABLE = 'turnos t'; 
+const FIELDS = 't.turno_id, t.orden, t.hora_desde, t.hora_hasta, t.activo, t.creado, t.modificado';
+const TABLE = 'turnos as t'; 
 
 export default class ShiftsDB {
 
@@ -39,7 +39,7 @@ export default class ShiftsDB {
         filters = null,
         limit = 0,
         offset = 0,
-        orderBy = 'horaInicio', 
+        orderBy = 'turno_id', 
         asc = true
     ) => {
         const strAsc = asc ? 'ASC' : 'DESC';
@@ -71,17 +71,8 @@ export default class ShiftsDB {
             const conexion = await DBConnection.initConnection();
             const [rows] = await conexion.query(strSql, filterValuesArray);
 
-            return rows.map(row => new ShiftsDTO(
-                row.turno_id, 
-                row.servicio_id, 
-                row.cliente_id, 
-                row.hora_inicio, 
-                row.duracion_minutos, 
-                row.estado, 
-                row.notas,
-                row.creado, 
-                row.modificado
-            ));
+            return rows;
+                
         } catch (error) {
             console.log('[DB] Error en buscarTodos [Shifts]');
             console.error('DB error:', error.code, error.sqlMessage);
@@ -101,14 +92,12 @@ export default class ShiftsDB {
             
             const row = rows[0];
             return new ShiftsDTO(
-                row.turno_id, 
-                row.servicio_id, 
-                row.cliente_id, 
-                row.hora_inicio, 
-                row.duracion_minutos, 
-                row.estado, 
-                row.notas,
-                row.creado, 
+                row.turno_id,
+                row.orden,
+                row.hora_desde,
+                row.hora_hasta,
+                row.activo,
+                row.creado,
                 row.modificado
             );
 

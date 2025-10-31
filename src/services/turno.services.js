@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 
-import ShiftsDB from '../database/shifts.db.js'; 
-import ShiftsDTO from '../database/shiftsDTO.js'; 
+import ShiftsDB from '../database/turno.db.js'; 
+import ShiftsDTO from '../database/turnoDTO.js'; 
 
 export default class ShiftsService { 
     

@@ -5,8 +5,8 @@ export default class ServiciosDTO {
         this.descripcion = descripcion;
         this.importe = importe;
         this.activo = Number(activo) === 1 ? true : false;
-        this.creado = creado;
-        this.modificado = modificado;
+        this.creado = new Date(creado).toISOString();
+        this.modificado = new Date(modificado).toISOString()
     }
 
     static toDBFields (obj) {

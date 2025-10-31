@@ -1,11 +1,14 @@
 import express from 'express'
 import cors from 'cors'
-import usuariosV1Router from './v1/rutas/usuarios.route.js';
-import serviciosRouter from './v1/rutas/servicios.route.js';
-import turnosRouter from './v1/rutas/shifts.route.js';
 import passport from 'passport';
-import v1AuthRouter from './v1/rutas/auth.route.js';
+import RouterUsuariosV1 from './v1/rutas/usuarios.route.js';
+import RouterServiciosV1 from './v1/rutas/servicios.route.js';
+import RouterSalonesV1 from './v1/rutas/salones.route.js';
+import RouterAuthV1 from './v1/rutas/auth.route.js';
+import RouterShiftsV1 from './v1/rutas/turno.route.js';
 import { estrategia, validacion } from './config/passport.js';
+import { validarJWT } from './middlewares/auth/validarJWT.js';
+
 
 // CARGAMOS VARIABLES DE ENTORNO
 process.loadEnvFile()
@@ -21,15 +24,15 @@ passport.use(validacion);
 app.use(passport.initialize());
 
 // ROUTES
-app.use("/api/v1/auth", v1AuthRouter);
-app.use('/api/usuarios', usuariosV1Router)
-app.use('/api/v1/usuarios', usuariosV1Router)
-app.use('/api/v1/protected', passport.authenticate('jwt', {session: false}), (req, res) => {
-  res.json({message:'Authorized', user: req.user})
-})
-app.use('/api/servicios', serviciosRouter)
-app.use('/api/v1/servicios', serviciosRouter)
-app.use('/api/v1/shifts', turnosRouter)
-app.use('/api/turnos', turnosRouter)
+app.use("/api/auth", RouterAuthV1);
+app.use("/api/v1/auth", RouterAuthV1);
+app.use('/api/usuarios', RouterUsuariosV1)
+app.use('/api/v1/usuarios', RouterUsuariosV1)
+app.use('/api/servicios', RouterServiciosV1)
+app.use('/api/v1/servicios', RouterServiciosV1)
+app.use('/api/salones', RouterSalonesV1)
+app.use('/api/v1/salones', RouterSalonesV1)
+app.use('/api/shifts', validarJWT, RouterShiftsV1)
+app.use('/api/v1/shifts',validarJWT, RouterShiftsV1 )
 app.listen(port, () => console.log(`Server listening on port: ${port}. To close server press Ctrl + C`))
 

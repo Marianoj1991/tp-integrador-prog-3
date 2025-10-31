@@ -31,39 +31,24 @@ const estrategia = new LocalStrategy(
 )
 
 const validacion = new JwtStrategy(
-  {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
-  },
-  async (jwtPayload, done) => {
-    try {
-      console.log("--- PAYLOAD JWT RECIBIDO ---");
-      console.log(jwtPayload); // 👈 LINEA DE DEPURACIÓN CLAVE
-      console.log("----------------------------");
+  {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.JWT_SECRET
+  },
+  async (jwtPayload, done) => {
+    try {
+      const servicio = new UsuariosServicios()
+      const usuario = await servicio.buscarPorId(jwtPayload.usuarioId)     
 
-      const service = new UsuariosServicios()
-      
-      // Verifica si la propiedad es 'usuarioId' o si es otra (ej: 'id', 'sub', 'uid')
-      const idAUsar = jwtPayload.usuarioId; // Podría ser otra propiedad
-
-      if (!idAUsar) {
-        // Si no hay ID, falla antes de llamar a la DB
-        return done(null, false, { message: 'Token no contiene ID de usuario.' });
-      }
-      
-      const usuario = await service.buscarPorId(idAUsar)
-      
-      if (usuario) {
-        return done(null, usuario)
-      } else {
-        return done(null, false, { message: 'Usuario no encontrado.' })
-      }
-    } catch (error) {
-      // El error que te está saliendo
-      console.error("Error en JwtStrategy:", error); 
-      return done(error, false, { message: 'Error interno al validar el token' })
-    }
-  }
+      if (usuario) {
+        return done(null, usuario)
+      } else {
+        return done(null, false, { message: 'Token incorrecto.' })
+      }
+    } catch (error) {
+      return done(error, false, { message: 'Error interno al validar el token' })
+    }
+  }
 )
 
 export { estrategia, validacion }

@@ -1,15 +1,15 @@
 import express from 'express'
 
-import ServiciosControlador from '../../controllers/servicios.controlador.js'
+import SalonesControlador from '../../controllers/salones.controlador.js'
 import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
-import {
-  actualizarServiciosValidaciones,
-  crearServiciosValidaciones
-} from '../../middlewares/validaciones/servicios-campos-post.js'
 import { rolesPermitidos } from '../../middlewares/auth/roles-permitidos.js'
+import {
+  actualizarSalonesValidaciones,
+  crearSalonesValidaciones
+} from '../../middlewares/validaciones/salones.validaciones.js'
 import { validarJWT } from '../../middlewares/auth/validarJWT.js'
 
-const serviciosControlador = new ServiciosControlador()
+const salonesControlador = new SalonesControlador()
 
 const router = express.Router()
 
@@ -17,41 +17,42 @@ router.get(
   '/',
   validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
-  serviciosControlador.buscarTodos
+  salonesControlador.buscarTodos
 )
 
 router.get(
-  '/:servicioId',
+  '/:salonId',
   validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
-  serviciosControlador.buscarPorId
+  salonesControlador.buscarPorId
 )
 
 router.post(
   '/',
   validarJWT,
   rolesPermitidos('admin', 'empleado'),
-  crearServiciosValidaciones,
+  crearSalonesValidaciones,
   validarCampos,
-  serviciosControlador.crear
+  salonesControlador.crear
 )
 
-// router.post("/", serviciosControlador.crear);
+// router.post("/", salonesControlador.crear);
 
 router.put(
-  '/:servicioId',
+  '/:salonId',
   validarJWT,
   rolesPermitidos('admin', 'empleado'),
-  actualizarServiciosValidaciones,
+  actualizarSalonesValidaciones,
   validarCampos,
-  serviciosControlador.actualizar
+  salonesControlador.actualizar
 )
 
 router.delete(
-  '/:servicioId',
+  '/:salonId',
   validarJWT,
   rolesPermitidos('admin', 'empleado'),
-  serviciosControlador.eliminar
+  salonesControlador.eliminar
 )
+
 
 export default router

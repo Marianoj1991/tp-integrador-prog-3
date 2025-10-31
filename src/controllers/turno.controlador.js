@@ -1,4 +1,4 @@
-import ShiftsService from '../services/shifts.services.js'; 
+import ShiftsService from '../services/turno.services.js'; 
 
 export default class ShiftsControlador {
     
@@ -9,10 +9,8 @@ export default class ShiftsControlador {
     // @desc    Obtener todos los turnos con filtros, paginación y ordenación
     // @route   GET /api/v1/shifts
     buscarTodos = async (req, res) => {
-        const servicioId = req.query.servicioId;
-        const clienteId = req.query.clienteId;
-        const estado = req.query.estado;
-
+        const turnoId = req.query.turnoId;
+        const turnoOrden = req.query.orden;
         const limit = req.query.limit;
         const offset = req.query.offset;
         const order = req.query.order;
@@ -21,14 +19,14 @@ export default class ShiftsControlador {
         try {
             const pLimit = limit ? Number(limit) : 0;
             const pOffset = offset ? Number(offset) : 0;
-            const pOrder = order || 'horaInicio'; 
+            const pOrder = order || 'horaDesde'; 
             const pAsc = asc === 'false' ? false : true;
 
             const filters = {};
 
-            if (servicioId) filters.servicioId = servicioId;
-            if (clienteId) filters.clienteId = clienteId;
-            if (estado) filters.estado = estado;
+            if (turnoId) filters.turnoId = turnoId;
+            if (turnoOrden) filters.orden = turnoOrden;
+            
 
             const dataTurnos = await this.turnos.buscarTodos(
                 filters,

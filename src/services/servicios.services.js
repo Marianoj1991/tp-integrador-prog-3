@@ -28,11 +28,12 @@ export default class Servicios {
       const dtoResultados = serviciosDbResultados.map(
         (row) =>
           new ServiciosDTO(
-            row['servicios_id'],
+            row['servicio_id'],
             row['descripcion'],
             row['importe'],
+            row['activo'],
+            row['creado'],
             row['modificado'],
-            row['activo']
           )
       )
 
@@ -44,14 +45,15 @@ export default class Servicios {
 
   buscarPorId = async (id) => {
     try {
-      const row = await this.servicios.buscarPorId(id)
+      const servicio = await this.servicios.buscarPorId(id)
 
       return new ServiciosDTO(
-        row['servicios_id'],
-        row['descripcion'],
-        row['importe'],
-        row['modificado'],
-        row['activo']
+        servicio['servicio_id'],
+        servicio['descripcion'],
+        servicio['importe'],
+        servicio['activo'],
+        servicio['creado'],
+        servicio['modificado']
       )
     } catch (err) {
       throw err
@@ -73,7 +75,6 @@ export default class Servicios {
         bDescripcion,
         bImporte,
         ...restoServicio,
-        modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
       }
 
       const existeServicio = await this.servicios.buscarPorDescripcion(
@@ -85,15 +86,16 @@ export default class Servicios {
         throw new Error(`El servicio ${bDescripcion} ya existe`)
       }
 
-      const result = await this.servicios.crear(servicioToInsert)
+      const servicio = await this.servicios.crear(servicioToInsert)
 
 
       return new ServiciosDTO(
-        result['servicios_id'],
-        result['descripcion'],
-        result['importe'],
-        result['modificado'],
-        result['activo']
+        servicio['servicio_id'],
+        servicio['descripcion'],
+        servicio['importe'],
+        servicio['activo'],
+        servicio['creado'],
+        servicio['modificado']
       )
     } catch (error) {
       throw error
@@ -110,8 +112,7 @@ export default class Servicios {
       }
 
       const datosNuevos = {
-        ...datos,
-        modificado: new Date().toISOString().replace('T', ' ').replace('Z', '')
+        ...datos
       }
 
       const datosDB = ServiciosDTO.toDBFields(datosNuevos).reduce((acc, act) => {

@@ -9,7 +9,7 @@ export default class UsuariosDB {
     orderBy = 'usuario_id',
     asc = 'ASC'
   ) => {
-    let strSql = `SELECT usuario_id, nombre, apellido, tipo_usuario, modificado, activo FROM usuarios WHERE activo = 1 `
+    let strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE activo = 1 `
 
     const filterValuesArray = []
 
@@ -55,6 +55,24 @@ export default class UsuariosDB {
     }
   }
 
+  buscarTodosClientes = async () => {
+
+    const strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE tipo_usuario = 3`
+
+    const conexion = await DBConnection.initConnection()
+    
+    try {
+
+      const [rows] = await conexion.query(strSql)
+
+      return rows.length > 0 ? rows : null
+    } catch (error) {
+      console.log('[DB] Error en buscarTodosClientes')
+      throw error
+    }
+
+  }
+
   buscarPorId = async (usuarioId) => {
     const strSql = `SELECT usuario_id, nombre, apellido, nombre_usuario, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE usuario_id = ?`
 
@@ -74,6 +92,7 @@ export default class UsuariosDB {
     const strSql =
       'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
 
+    console.log("aqui")
     try {
       const conexion = await DBConnection.initConnection()
 
@@ -101,7 +120,6 @@ export default class UsuariosDB {
       'INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);'
 
     const conexion = await DBConnection.initConnection()
-
     try {
       await conexion.query(strSql, [
         nombre,
