@@ -7,7 +7,6 @@ import {
   actualizarUsuarioValidaciones,
   crearUsuariosValidaciones
 } from '../../middlewares/validaciones/usuarios-campos-post.js'
-import { validarJWT } from '../../middlewares/auth/validarJWT.js'
 
 const usuariosControlador = new UsuariosControlador()
 
@@ -15,28 +14,24 @@ const router = express.Router()
 
 router.get(
   '/',
-  validarJWT,
   rolesPermitidos('admin'),
   usuariosControlador.buscarTodos
 )
 
 router.get(
   '/clientes',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   usuariosControlador.buscarTodosClientes
 )
 
 router.get(
   '/:usuarioId',
-  validarJWT,
   rolesPermitidos('admin'),
   usuariosControlador.buscarPorId
 )
 
 router.post(
   '/',
-  validarJWT,
   rolesPermitidos('admin'),
   crearUsuariosValidaciones,
   validarCampos,
@@ -47,7 +42,6 @@ router.post(
 
 router.put(
   '/:usuarioId',
-  validarJWT,
   rolesPermitidos('admin'),
   actualizarUsuarioValidaciones,
   validarCampos,
@@ -56,7 +50,6 @@ router.put(
 
 router.delete(
   '/:usuarioId',
-  validarJWT,
   rolesPermitidos('admin'),
   usuariosControlador.eliminar
 )

@@ -83,17 +83,19 @@ export default class UsuariosServicios {
     try {
       const usuario = await this.usuarios.buscarPorId(id)
 
-      return usuario ? new UsuariosDTO(
-        usuario['usuario_id'],
-        usuario['nombre'],
-        usuario['apellido'],
-        usuario['nombre_usuario'],
-        usuario['tipo_usuario'],
-        usuario['modificado'],
-        usuario['activo'],
-        usuario['celular'],
-        usuario['foto']
-      ) : null
+      return usuario
+        ? new UsuariosDTO(
+            usuario['usuario_id'],
+            usuario['nombre'],
+            usuario['apellido'],
+            usuario['nombre_usuario'],
+            usuario['tipo_usuario'],
+            usuario['modificado'],
+            usuario['activo'],
+            usuario['celular'],
+            usuario['foto']
+          )
+        : null
     } catch (err) {
       throw err
     }
@@ -102,24 +104,25 @@ export default class UsuariosServicios {
   crear = async (usuario) => {
     const { contrasenia, ...restoUsuario } = usuario
 
+    const existeUsuario = await this.usuarios.buscarPorNombreUsuario(
+      usuario.nombreUsuario
+    )
+
+    if (existeUsuario) {
+      console.error('[UsuariosServicios][crear] Error:')
+      throw new Error(`El usuario ${usuario.nombreUsuario} ya existe`)
+    }
+
     if (!usuario?.contrasenia || typeof usuario.contrasenia !== 'string') {
       throw new Error('Contraseña inválida')
     }
 
     const hashedPassword = await hashPassword(contrasenia)
+
     try {
       const usuarioNuevo = {
         ...restoUsuario,
         contrasenia: hashedPassword
-      }
-
-      const existeUsuario = await this.usuarios.buscarPorNombreUsuario(
-        usuario.nombreUsuario
-      )
-
-      if (existeUsuario) {
-        console.error('[UsuariosServicios][crear] Error:')
-        throw new Error(`El usuario ${usuario.nombreUsuario} ya existe`)
       }
 
       const nuevoUsuario = await this.usuarios.crear(usuarioNuevo)
@@ -156,19 +159,22 @@ export default class UsuariosServicios {
         }
       }, {})
 
-      const usuarioActualizado = await this.usuarios.actualizar(usuarioId, datosDB)
+      const usuarioActualizado = await this.usuarios.actualizar(
+        usuarioId,
+        datosDB
+      )
 
-        return new UsuariosDTO(
-          usuarioActualizado['usuario_id'],
-          usuarioActualizado['nombre'],
-          usuarioActualizado['apellido'],
-          usuarioActualizado['nombre_usuario'],
-          usuarioActualizado['tipo_usuario'],
-          usuarioActualizado['modificado'],
-          usuarioActualizado['activo'],
-          usuarioActualizado['celular'],
-          usuarioActualizado['foto']
-        )
+      return new UsuariosDTO(
+        usuarioActualizado['usuario_id'],
+        usuarioActualizado['nombre'],
+        usuarioActualizado['apellido'],
+        usuarioActualizado['nombre_usuario'],
+        usuarioActualizado['tipo_usuario'],
+        usuarioActualizado['modificado'],
+        usuarioActualizado['activo'],
+        usuarioActualizado['celular'],
+        usuarioActualizado['foto']
+      )
     } catch (err) {
       throw err
     }

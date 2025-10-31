@@ -9,6 +9,6 @@ const authControlador = new AuthControlador();
 router.post('/login', authControlador.login);
 
 router.post('/signup', crearUsuariosValidaciones,
-  validarCampos ,authControlador.signUp);
+  validarCampos, authControlador.signUp);
 
 export default router 
