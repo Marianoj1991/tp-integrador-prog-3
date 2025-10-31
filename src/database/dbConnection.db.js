@@ -3,7 +3,6 @@ process.loadEnvFile()
 
 export default class DBConnection {
   static connection = null
-
   static async initConnection() {
     if (!DBConnection.connection) {
       DBConnection.connection = mysql.createPool({
