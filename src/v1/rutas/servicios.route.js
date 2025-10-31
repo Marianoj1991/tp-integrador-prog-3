@@ -15,21 +15,18 @@ const router = express.Router()
 
 router.get(
   '/',
-  validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
   serviciosControlador.buscarTodos
 )
 
 router.get(
   '/:servicioId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
   serviciosControlador.buscarPorId
 )
 
 router.post(
   '/',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   crearServiciosValidaciones,
   validarCampos,
@@ -40,7 +37,6 @@ router.post(
 
 router.put(
   '/:servicioId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   actualizarServiciosValidaciones,
   validarCampos,
@@ -49,7 +45,6 @@ router.put(
 
 router.delete(
   '/:servicioId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   serviciosControlador.eliminar
 )

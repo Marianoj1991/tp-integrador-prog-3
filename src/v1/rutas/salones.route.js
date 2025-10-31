@@ -7,7 +7,6 @@ import {
   actualizarSalonesValidaciones,
   crearSalonesValidaciones
 } from '../../middlewares/validaciones/salones.validaciones.js'
-import { validarJWT } from '../../middlewares/auth/validarJWT.js'
 
 const salonesControlador = new SalonesControlador()
 
@@ -15,21 +14,18 @@ const router = express.Router()
 
 router.get(
   '/',
-  validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
   salonesControlador.buscarTodos
 )
 
 router.get(
   '/:salonId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado', 'cliente'),
   salonesControlador.buscarPorId
 )
 
 router.post(
   '/',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   crearSalonesValidaciones,
   validarCampos,
@@ -40,7 +36,6 @@ router.post(
 
 router.put(
   '/:salonId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   actualizarSalonesValidaciones,
   validarCampos,
@@ -49,10 +44,8 @@ router.put(
 
 router.delete(
   '/:salonId',
-  validarJWT,
   rolesPermitidos('admin', 'empleado'),
   salonesControlador.eliminar
 )
-
 
 export default router

@@ -13,9 +13,14 @@ const estrategia = new LocalStrategy(
   async (nombreUsuario, contrasenia, done) => {
     try {
       const usuariosServicios = new UsuariosServicios()
-      const usuario = await usuariosServicios.buscarPorNombreUsuario(nombreUsuario)
+      const usuario = await usuariosServicios.buscarPorNombreUsuario(
+        nombreUsuario
+      )
 
-      const esPassValido = await bcryptjs.compare(contrasenia, usuario.contrasenia)
+      const esPassValido = await bcryptjs.compare(
+        contrasenia,
+        usuario.contrasenia
+      )
 
       if (!usuario || !esPassValido) {
         return done(null, false, {
@@ -38,7 +43,7 @@ const validacion = new JwtStrategy(
   async (jwtPayload, done) => {
     try {
       const servicio = new UsuariosServicios()
-      const usuario = await servicio.buscarPorId(jwtPayload.usuarioId)     
+      const usuario = await servicio.buscarPorId(jwtPayload.usuarioId)
 
       if (usuario) {
         return done(null, usuario)
@@ -46,7 +51,9 @@ const validacion = new JwtStrategy(
         return done(null, false, { message: 'Token incorrecto.' })
       }
     } catch (error) {
-      return done(error, false, { message: 'Error interno al validar el token' })
+      return done(error, false, {
+        message: 'Error interno al validar el token'
+      })
     }
   }
 )
