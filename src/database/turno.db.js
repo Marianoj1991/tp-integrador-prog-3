@@ -32,9 +32,6 @@ export default class ShiftsDB {
     }
 
 
-    /**
-     * @param {object} filters - Filtros en formato JS (camelCase).
-     */
     buscarTodos = async (
         filters = null,
         limit = 0,
@@ -44,26 +41,16 @@ export default class ShiftsDB {
     ) => {
         const strAsc = asc ? 'ASC' : 'DESC';
 
-        // 1. Validación de dirección de orden
-        // Nota: Asegúrate que 'allowedDirections' se exporte correctamente de '../constants/index.js'
-        // if (!allowedDirections.includes(strAsc.trim().toUpperCase())) {
-        //     throw new Error('Dirección de orden inválida');
-        // }
-
-        // 2. Base de la consulta
+     
         let baseSql = `SELECT ${FIELDS} FROM ${TABLE}`; 
 
-        // 3. Convertir filtros de JS a SQL
+   
         const dbFilters = ShiftsDTO.toDBFilters(filters);
         
-        // 4. Construir consulta con filtros y orden
-        // El método _buildQuery ahora agrega el WHERE si es necesario
         let { strSql, filterValuesArray } = this._buildQuery(baseSql, dbFilters, orderBy, strAsc);
 
-        // 5. Agregar Paginación
         if (limit) {
             strSql += ' LIMIT ? OFFSET ? ';
-            // MySQL requiere que limit y offset se pasen como valores de la consulta
             filterValuesArray.push(limit, offset); 
         }
 

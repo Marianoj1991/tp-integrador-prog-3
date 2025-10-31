@@ -31,8 +31,8 @@ app.use('/api/servicios', RouterServiciosV1)
 app.use('/api/v1/servicios', RouterServiciosV1)
 app.use('/api/salones', RouterSalonesV1)
 app.use('/api/v1/salones', RouterSalonesV1)
-app.use('/api/shifts', validarJWT, RouterShiftsV1)
-app.use('/api/v1/shifts', validarJWT, RouterShiftsV1)
+app.use('/api/turnos', validarJWT, RouterShiftsV1)
+app.use('/api/v1/turnos', validarJWT, RouterShiftsV1)
 app.listen(port, () =>
   console.log(
     `Server listening on port: ${port}. To close server press Ctrl + C`

@@ -6,8 +6,6 @@ export default class ShiftsControlador {
         this.turnos = new ShiftsService(); 
     }
 
-    // @desc    Obtener todos los turnos con filtros, paginación y ordenación
-    // @route   GET /api/v1/shifts
     buscarTodos = async (req, res) => {
         const turnoId = req.query.turnoId;
         const turnoOrden = req.query.orden;
@@ -62,8 +60,6 @@ export default class ShiftsControlador {
         }
     }
 
-    // @desc    Crear un nuevo turno
-    // @route   POST /api/v1/shifts
     crear = async (req, res) => {
         const { body } = req;
         const { servicioId, clienteId, horaInicio, duracionMinutos, estado, notas } = body;
@@ -95,9 +91,6 @@ export default class ShiftsControlador {
                 .json({ status: 'FAILED', data: { error: error?.message || error } });
         }
     }
-
-    // @desc    Actualizar un turno
-    // @route   PUT /api/v1/shifts/:turnoId
     actualizar = async (req, res) => {
         const body = req.body;
         const turnoId = req.params.turnoId;
@@ -121,8 +114,6 @@ export default class ShiftsControlador {
         }
     }
 
-    // @desc    Eliminar un turno
-    // @route   DELETE /api/v1/shifts/:turnoId
     eliminar = async (req, res) => {
         const turnoId = req.params.turnoId;
 
