@@ -1,0 +1,20 @@
+meta {
+  name: GET usuarios
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/api/usuarios
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvSWQiOjksIm5vbWJyZVVzdWFyaW8iOiJtYWNhcmVuYUBnbWFpbC5jb20iLCJ0aXBvVXN1YXJpbyI6ImFkbWluIiwiaWF0IjoxNzYxOTUxNTU3LCJleHAiOjE3NjE5NTUxNTd9.SHkOkqrwlBxQ4UYGzlgE83Bj3qXuUteeaUjrDFbyi38
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
