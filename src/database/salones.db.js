@@ -49,6 +49,19 @@ export default class SalonesDB {
     }
   }
 
+  buscarImporteSalon = async (id) => {
+    const strSql = `SELECT importe FROM salones WHERE salon_id = ?`
+
+    const conexion = await DBConnection.initConnection()
+    try {
+      const [rows] = await conexion.query(strSql, [id])
+      return rows.length > 0 ? rows[0] : null
+    } catch (error) {
+      console.error('[Salones DB][buscarImporteSalon] Error: ', error)
+      throw error
+    }
+  }
+
   buscarPorTitulo = async (titulo) => {
     const strSql = `SELECT salon_id, direccion, titulo, importe, capacidad, activo, creado, modificado FROM salones WHERE titulo = ?`
 
