@@ -14,7 +14,7 @@ export default class AuthControlador {
     passport.authenticate('local', { session: false }, (err, user, info) => {
       if (err || !user) {
         return res.status(400).json({
-          message: info?.message ? info.message : '',
+          message: info?.message ? info.message : 'No se encontró usuario',
           user
         })
       }

@@ -8,3 +8,5 @@ export const allowedColumns = [
   'modificado'
 ]
 export const allowedDirections = ['ASC', 'DESC']
+
+export const formatosValidos = ['csv', 'pdf']

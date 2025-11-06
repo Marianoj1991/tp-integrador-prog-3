@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>Confirmación de Reserva</title>
+    <style>
+      body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color:
+      #eef2f7; margin: 0; padding: 0; } .container { max-width: 600px; margin:
+      30px auto; padding: 20px; background-color: #ffffff; border-radius: 12px;
+      border: 1px solid #d0d7de; } header { text-align: center; padding: 20px 0;
+      background: linear-gradient(90deg, #4facfe, #00f2fe); border-radius: 12px
+      12px 0 0; color: #fff; } header h1 { margin: 0; font-size: 22px; }
+      .content { padding: 20px; color: #333; } .reserva-box { background-color:
+      #f0f9ff; border: 1px solid #b6e0fe; border-radius: 8px; padding: 15px;
+      margin: 20px 0; } .reserva-box p { margin: 8px 0; font-size: 15px; }
+      .reserva-box strong { color: #005f99; } footer { text-align: center;
+      font-size: 12px; color: #777; margin-top: 15px; padding-top: 10px;
+      border-top: 1px solid #e0e0e0; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <header>
+        <h1>🎂 Confirmación de tu Reserva</h1>
+      </header>
+
+      <div class='content'>
+        <p>Hola {{usuario}},</p>
+        <p>Tu reserva ha sido registrada con éxito. Aquí tienes los detalles:</p>
+
+        <div class='reserva-box'>
+          <p><strong>📅 Fecha:</strong> {{fecha}}</p>
+          <p><strong>🏠 Salón:</strong> {{salon}}</p>
+          <p><strong>⏰ Turno:</strong> {{turno}}</p>
+          <p><strong>⏰ Hasta:</strong> {{hasta}}</p>
+        </div>
+
+        <p>¡Gracias por confiar en nosotros para tu evento especial!</p>
+      </div>
+
+      <footer>
+        &copy; 2025 Sistema de Reservas de Salones
+      </footer>
+    </div>
+  </body>
+</html>

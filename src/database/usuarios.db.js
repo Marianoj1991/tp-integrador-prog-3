@@ -92,7 +92,6 @@ export default class UsuariosDB {
     const strSql =
       'SELECT usuario_id, nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, activo, creado, modificado FROM usuarios WHERE nombre_usuario = ?'
 
-    console.log("aqui")
     try {
       const conexion = await DBConnection.initConnection()
 
