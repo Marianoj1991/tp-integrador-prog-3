@@ -19,7 +19,6 @@ export default class NotificacionesServicio {
     try {
       const plantillaHandlebars = handlebars.compile(plantilla)
 
-      console.log(datosCorreo);
 
       const datos = {
         fecha: datosCorreo.fecha_reserva,

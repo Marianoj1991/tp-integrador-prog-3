@@ -1,7 +1,7 @@
 import express from 'express'
 
 import SalonesControlador from '../../controllers/salones.controlador.js'
-import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
+import { validarCampos } from '../../middlewares/validaciones/validar-campos.validaciones.js'
 import { rolesPermitidos } from '../../middlewares/auth/roles-permitidos.js'
 import {
   actualizarSalonesValidaciones,

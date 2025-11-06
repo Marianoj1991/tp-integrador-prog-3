@@ -1,13 +1,12 @@
 import express from 'express'
 
 import ServiciosControlador from '../../controllers/servicios.controlador.js'
-import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
+import { validarCampos } from '../../middlewares/validaciones/validar-campos.validaciones.js'
 import {
   actualizarServiciosValidaciones,
   crearServiciosValidaciones
-} from '../../middlewares/validaciones/servicios-campos-post.js'
+} from '../../middlewares/validaciones/servicios.validaciones.js'
 import { rolesPermitidos } from '../../middlewares/auth/roles-permitidos.js'
-import { validarJWT } from '../../middlewares/auth/validarJWT.js'
 
 const serviciosControlador = new ServiciosControlador()
 

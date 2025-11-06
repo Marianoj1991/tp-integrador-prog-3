@@ -2,11 +2,11 @@ import express from 'express'
 
 import UsuariosControlador from '../../controllers/usuarios.controlador.js'
 import { rolesPermitidos } from '../../middlewares/auth/roles-permitidos.js'
-import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
+import { validarCampos } from '../../middlewares/validaciones/validar-campos.validaciones.js'
 import {
   actualizarUsuarioValidaciones,
   crearUsuariosValidaciones
-} from '../../middlewares/validaciones/usuarios-campos-post.js'
+} from '../../middlewares/validaciones/usuarios.validaciones.js'
 
 const usuariosControlador = new UsuariosControlador()
 

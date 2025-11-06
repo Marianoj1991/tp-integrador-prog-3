@@ -1,7 +1,7 @@
 import express from 'express'
 import AuthControlador from '../../controllers/auth.controlador.js'
-import { crearUsuariosValidaciones } from '../../middlewares/validaciones/usuarios-campos-post.js'
-import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
+import { crearUsuariosValidaciones } from '../../middlewares/validaciones/usuarios.validaciones.js'
+import { validarCampos } from '../../middlewares/validaciones/validar-campos.validaciones.js'
 
 const router = express.Router()
 const authControlador = new AuthControlador()

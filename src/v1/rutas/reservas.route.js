@@ -1,8 +1,9 @@
 import express from 'express'
 import { check } from 'express-validator'
 import ReservasControlador from '../../controllers/reservas.controlador.js'
-import { validarCampos } from '../../middlewares/validaciones/validar-campos.js'
+import { validarCampos } from '../../middlewares/validaciones/validar-campos.validaciones.js'
 import { rolesPermitidos } from '../../middlewares/auth/roles-permitidos.js'
+import { actualizarReservaValidacion, crearReservasValidaciones } from '../../middlewares/validaciones/reservas.validaciones.js'
 
 const reservasControlador = new ReservasControlador()
 const router = express.Router()
@@ -20,9 +21,6 @@ const router = express.Router()
  *         - turno_id
  *         - servicios
  *       properties:
- *         id:
- *           type: integer
- *           description: ID de la reserva
  *         fecha_reserva:
  *           type: string
  *           format: date
@@ -85,7 +83,7 @@ const router = express.Router()
  *     summary: Obtener informes de reservas
  *     tags: [Reservas]
  *     security:
- *      - bearerAuth: [] 
+ *      - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: formato
@@ -106,7 +104,7 @@ const router = express.Router()
  *     summary: Listar todas las reservas
  *     tags: [Reservas]
  *     security:
- *      - bearerAuth: [] 
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de reservas
@@ -144,7 +142,7 @@ const router = express.Router()
  *     summary: Obtener una reserva por ID
  *     tags: [Reservas]
  *     security:
- *      - bearerAuth: [] 
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: reservaId
@@ -177,19 +175,15 @@ router.get(
 router.post(
   '/',
   rolesPermitidos('admin'),
-  [
-    check('fecha_reserva', 'La fecha es necesaria.').notEmpty(),
-    check('salon_id', 'El salón es necesario.').notEmpty(),
-    check('usuario_id', 'El usuario es necesario.').notEmpty(),
-    check('turno_id', 'El turno es necesario.').notEmpty(),
-    check('servicios', 'Faltan los servicios de la reserva.')
-      .notEmpty()
-      .isArray(),
-    check('servicios.*.importe')
-      .isFloat()
-      .withMessage('El importe debe ser numérico.'),
-    validarCampos
-  ],
+  crearReservasValidaciones,  
+  validarCampos,
+  reservasControlador.crear
+)
+router.put(
+  '/',
+  rolesPermitidos('admin', 'empleado'),
+  actualizarReservaValidacion,  
+  validarCampos,
   reservasControlador.crear
 )
 

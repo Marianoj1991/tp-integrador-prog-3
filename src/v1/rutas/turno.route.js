@@ -2,12 +2,12 @@ import { Router } from "express";
 import passport from "passport";
 
 import ShiftsControlador from "../../controllers/turno.controlador.js";
-import { validarCampos } from "../../middlewares/validaciones/validar-campos.js";
+import { validarCampos } from "../../middlewares/validaciones/validar-campos.validaciones.js";
 
 import {
   actualizarShiftsValidaciones,
   crearShiftsValidaciones,
-} from "../../middlewares/validaciones/shifts.campos-post.js";
+} from "../../middlewares/validaciones/turnos.validaciones.js";
 import { rolesPermitidos } from "../../middlewares/auth/roles-permitidos.js";
 
 const shiftsControlador = new ShiftsControlador();
