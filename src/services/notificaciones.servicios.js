@@ -8,6 +8,9 @@ process.loadEnvFile()
 
 export default class NotificacionesServicio {
   enviarCorreo = async (datosCorreo, adminMails) => {
+
+    console.log(datosCorreo);
+
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = path.dirname(__filename)
     const plantillaPath = path.join(

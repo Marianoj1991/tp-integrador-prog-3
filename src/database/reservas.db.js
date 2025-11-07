@@ -142,21 +142,24 @@ export default class ReservasDB {
     }
   }
 
-buscarDatosParaInformes = async () => {
-   const conexion = await DBConnection.initConnection()
-  const sql1 = `CALL obtenerDatosInforme()`;
-  const sql2 = `CALL totalReservasPorSalon()`;
-  const sql3 = `CALL ingresosPorMes()`;
+  buscarDatosParaInformes = async () => {
+    const conexion = await DBConnection.initConnection()
+    const sql1 = `CALL obtenerDatosInforme()`
+    const sql2 = `CALL totalReservasPorSalon()`
+    const sql3 = `CALL ingresosPorMes()`
 
-  const [datosInforme] = await conexion.query(sql1);
-  const [totalPorSalon] = await conexion.query(sql2);
-  const [ingresosPorMes] = await conexion.query(sql3);
+    try {
+      const [datosInforme] = await conexion.query(sql1)
+      const [totalPorSalon] = await conexion.query(sql2)
+      const [ingresosPorMes] = await conexion.query(sql3)
 
-  return {
-    datosInforme: datosInforme[0],   
-    totalPorSalon: totalPorSalon[0], 
-    ingresosPorMes: ingresosPorMes[0] 
-  };
-};
-
+      return {
+        datosInforme: datosInforme[0],
+        totalPorSalon: totalPorSalon[0],
+        ingresosPorMes: ingresosPorMes[0]
+      }
+    } catch (error) {
+      console.error('[ReservaDB][buscarDatosParaInformes] Error:', error)
+    }
+  }
 }

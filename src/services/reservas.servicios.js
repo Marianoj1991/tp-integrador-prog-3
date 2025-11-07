@@ -23,9 +23,15 @@ export default class ReservasServicio {
 
   buscarPorId = async (reserva_id) => {
     try {
-      return await this.reservaDb.buscarPorId(reserva_id)
-    } catch (err) {
-      throw err
+      const reserva = await this.reservaDb.buscarPorId(reserva_id)
+
+      if (!reserva) {
+        throw new Error(`No existe reserva con ID ${reserva_id}`)
+      }
+
+      return reserva
+    } catch (error) {
+      throw error
     }
   }
 
@@ -82,63 +88,67 @@ export default class ReservasServicio {
   }
 
   generarInforme = async (formato) => {
-    const { datosInforme, totalPorSalon, ingresosPorMes } =
-      await this.reservaDb.buscarDatosParaInformes()
+    try {
+      const { datosInforme, totalPorSalon, ingresosPorMes } =
+        await this.reservaDb.buscarDatosParaInformes()
 
-    let datos = {
-      datosInforme,
-      totalPorSalon,
-      ingresosPorMes
-    }
-
-    if (formato === 'pdf') {
-      const fechaGeneracion = new Date().toLocaleString('es-AR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-
-      datos = {
-        ...datos,
-        fechaGeneracion
+      let datos = {
+        datosInforme,
+        totalPorSalon,
+        ingresosPorMes
       }
 
-      const buffer = await this.informeServicios.informeReservasPdf(datos)
+      if (formato === 'pdf') {
+        const fechaGeneracion = new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
 
-      return {
-        buffer,
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Dispositon': 'inline;'
+        datos = {
+          ...datos,
+          fechaGeneracion
+        }
+
+        const buffer = await this.informeServicios.informeReservasPdf(datos)
+
+        return {
+          buffer,
+          headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Dispositon': 'inline;'
+          }
+        }
+      } else if (formato === 'csv') {
+        
+        const csv = await this.informeServicios.informeReservasCsv(datos)
+        return {
+          path: csv,
+          headers: {
+            'Content-Type': 'text/csv',
+            'Content-Dispositon': 'attachment; filename = "reporte.csv"'
+          }
         }
       }
-
-    } else if (formato === 'csv') {
-
-      const csv = await this.informeServicios.informeReservasCsv(datos)
-      return {
-        path: csv,
-        headers: {
-          'Content-Type': 'text/csv',
-          'Content-Dispositon': 'attachment; filename = "reporte.csv"'
-        }
-      }
+    } catch (error) {
+      console.error('[ReservaServicios][generarInforma] Error:', error)
+      throw error
     }
   }
-    actualizar = async (reservaId, datos) => {
-      try {
-        const existeReserva = await this.reservaDb.buscarPorId(reservaId)
-  
-        if (!existeReserva) {
-          console.error('[Reserva][actualizar] Error:')
-          throw new Error(`El servicio no existe`)
-        }
-  
-        return this.reservaDb.actualizar(reservaId, datos)
-      } catch (err) {
-        throw err
+  actualizar = async (reservaId, datos) => {
+    try {
+      const existeReserva = await this.reservaDb.buscarPorId(reservaId)
+
+      if (!existeReserva) {
+        throw new Error(`No existe reserva con ID ${reserva_id}`)
       }
+
+      return this.reservaDb.actualizar(reservaId, datos)
+    } catch (error) {
+      console.error('[Reserva][actualizar] Error:', error)
+      throw error
     }
+  }
 }

@@ -11,9 +11,7 @@ const __dirname = path.dirname(__filename)
 
 export default class InformeServicio {
   informeReservasCsv = async ({
-    datosInforme,
-    totalPorSalon,
-    ingresosPorMes
+    datosInforme
   }) => {
     try {
       let ruta = path.resolve(__dirname, '../plantillas')

@@ -120,7 +120,7 @@ export default class ReservasControlador {
     actualizar = async (req, res) => {
     const body = req.body
     const reservaId = req.params.reservaId
-      console.log
+    
     if (!reservaId) {
       res.status(404).json({
         status: 'FAILED',
