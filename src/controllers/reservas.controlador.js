@@ -117,4 +117,26 @@ export default class ReservasControlador {
         .json({ status: 'FAILED', data: { error: error?.message || error } })
     }
   }
+    actualizar = async (req, res) => {
+    const body = req.body
+    const reservaId = req.params.reservaId
+      console.log
+    if (!reservaId) {
+      res.status(404).json({
+        status: 'FAILED',
+        data: {
+          error: 'El parámetro reservaId no puede ser vacío.'
+        }
+      })
+    }
+
+    try {
+      const reservaActualizada = await this.reservasServicio.actualizar(reservaId, body)
+      res.status(200).json(reservaActualizada)
+    } catch (error) {
+      res
+        .status(error?.status || 500)
+        .json({ status: 'FAILED', data: { error: error?.message || error } })
+    }
+  }
 }

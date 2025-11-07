@@ -6,7 +6,7 @@ import NotificacionesServicio from './notificaciones.servicios.js'
 
 export default class ReservasServicio {
   constructor() {
-    this.reserva = new Reservas()
+    this.reservaDb = new Reservas()
     this.reservasServicios = new ReservasServicios()
     this.salonesDB = new SalonesDB()
     this.notificaciones_servicios = new NotificacionesServicio()
@@ -15,7 +15,7 @@ export default class ReservasServicio {
 
   buscarTodos = async () => {
     try {
-      return await this.reserva.buscarTodos()
+      return await this.reservaDb.buscarTodos()
     } catch (err) {
       throw err
     }
@@ -23,7 +23,7 @@ export default class ReservasServicio {
 
   buscarPorId = async (reserva_id) => {
     try {
-      return await this.reserva.buscarPorId(reserva_id)
+      return await this.reservaDb.buscarPorId(reserva_id)
     } catch (err) {
       throw err
     }
@@ -54,7 +54,7 @@ export default class ReservasServicio {
     }
 
     try {
-      const result = await this.reserva.crear(nuevaReserva)
+      const result = await this.reservaDb.crear(nuevaReserva)
 
       if (!result) {
         return null
@@ -62,19 +62,19 @@ export default class ReservasServicio {
 
       await this.reservasServicios.crear(result.reserva_id, servicios)
 
-      const datosParaNotificacion = await this.reserva.datosParaNotificacion(
+      const datosParaNotificacion = await this.reservaDb.datosParaNotificacion(
         result.reserva_id,
         result.usuario_id
       )
 
-      const adminMails = await this.reserva.obtenerMailAdmins()
+      const adminMails = await this.reservaDb.obtenerMailAdmins()
 
       await this.notificaciones_servicios.enviarCorreo(
         datosParaNotificacion[0][0],
         adminMails[0]
       )
 
-      return this.reserva.buscarPorId(result.reserva_id)
+      return this.reservaDb.buscarPorId(result.reserva_id)
     } catch (error) {
       console.log('[SERVICIOS reservas] ERROR en reservas servicios: ', error)
       throw error
@@ -83,7 +83,7 @@ export default class ReservasServicio {
 
   generarInforme = async (formato) => {
     const { datosInforme, totalPorSalon, ingresosPorMes } =
-      await this.reserva.buscarDatosParaInformes()
+      await this.reservaDb.buscarDatosParaInformes()
 
     let datos = {
       datosInforme,
@@ -127,4 +127,18 @@ export default class ReservasServicio {
       }
     }
   }
+    actualizar = async (reservaId, datos) => {
+      try {
+        const existeReserva = await this.reservaDb.buscarPorId(reservaId)
+  
+        if (!existeReserva) {
+          console.error('[Reserva][actualizar] Error:')
+          throw new Error(`El servicio no existe`)
+        }
+  
+        return this.reservaDb.actualizar(reservaId, datos)
+      } catch (err) {
+        throw err
+      }
+    }
 }

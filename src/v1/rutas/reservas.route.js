@@ -160,6 +160,41 @@ const router = express.Router()
  *       404:
  *         description: Reserva no encontrada
  */
+/**
+ * @swagger
+ * /api/reservas/{reservaId}:
+ *   put:
+ *     summary: Actualizar una reserva existente por ID
+ *     tags: [Reservas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: reservaId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la reserva a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Reserva'
+ *     responses:
+ *       200:
+ *         description: Reserva actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Reserva'
+ *       400:
+ *         description: Error en validaciones o datos incompletos
+ *       403:
+ *         description: No autorizado para realizar esta acción
+ *       404:
+ *         description: Reserva no encontrada
+ */
 
 router.get('/informes', reservasControlador.informe)
 router.get(
@@ -180,11 +215,11 @@ router.post(
   reservasControlador.crear
 )
 router.put(
-  '/',
+  '/:reservaId',
   rolesPermitidos('admin', 'empleado'),
   actualizarReservaValidacion,  
   validarCampos,
-  reservasControlador.crear
+  reservasControlador.actualizar
 )
 
 export default router
