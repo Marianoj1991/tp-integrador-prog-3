@@ -50,6 +50,13 @@ El sistema gestiona las siguientes entidades:
 
 Incluye reglas de negocio como **soft delete**, generación de estadísticas mediante **stored procedures**, y restricciones de edición según rol.
 
+## 👥 Configuración de la base de datos
+Para la corrección del trabajo, los docentes deben utilizar el usuario creado específicamente para este proyecto (no root).
+Las credenciales ya están definidas en el archivo .env que se entrega junto al repositorio.
+
+- DB_USER=usuario_tp
+- DB_USER_PASSWORD=contraseña_tp
+
 ## 👥 Grupo de trabajo
 
 - Grupo: K
