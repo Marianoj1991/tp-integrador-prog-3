@@ -3,14 +3,13 @@ process.loadEnvFile()
 
 export default class DBConnection {
   static connection = null
-
   static async initConnection() {
     if (!DBConnection.connection) {
       DBConnection.connection = mysql.createPool({
         host: process.env.HOST,
-        user: process.env.USER,
-        password: process.env.PASSWORD,
-        database: process.env.DATABASE,
+        user: process.env.DB_USER,
+        password: process.env.DB_USER_PASSWORD,
+        database: process.env.DB_NAME,
         waitForConnections: true,
         connectionLimit: 10,
         maxIdle: 10,

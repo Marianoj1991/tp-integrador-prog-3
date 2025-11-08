@@ -1,15 +1,20 @@
-import jwt from 'jsonwebtoken'
+
 import passport from 'passport'
 import UsuariosDTO from '../database/usuariosDTO.js'
+import UsuariosServicios from '../services/usuarios.servicios.js'
+import { crearToken } from '../utils/crearToken.js'
 process.loadEnvFile()
 
 export default class AuthControlador {
+  constructor() {
+    this.usuarios = new UsuariosServicios()
+  }
 
   login = async (req, res) => {
     passport.authenticate('local', { session: false }, (err, user, info) => {
       if (err || !user) {
         return res.status(400).json({
-          message: info?.message ? info.message : '',
+          message: info?.message ? info.message : 'No se encontró usuario',
           user
         })
       }
@@ -19,12 +24,31 @@ export default class AuthControlador {
           res.send(err)
         }
         const { contrasenia, ...restoUsuario } = user
-    
-        const usuarioDTO = new UsuariosDTO(restoUsuario.usuario_id, restoUsuario.nombre, restoUsuario.apellido, restoUsuario.tipo_usuario, restoUsuario.modificado, restoUsuario.activo)
 
-        const token = jwt.sign({...usuarioDTO}, process.env.JWT_SECRET, {
-          expiresIn: '1h'
-        })
+        const {
+          usuario_id,
+          nombre,
+          apellido,
+          nombre_usuario,
+          tipo_usuario,
+          modificado,
+          activo,
+          celular,
+          foto
+        } = restoUsuario
+        const dataUsuarioToken = new UsuariosDTO(
+          usuario_id,
+          nombre,
+          apellido,
+          nombre_usuario,
+          tipo_usuario,
+          modificado,
+          activo,
+          celular,
+          foto
+        )
+
+        const token = crearToken(dataUsuarioToken)
 
         return res.json({ token })
       })
@@ -32,6 +56,9 @@ export default class AuthControlador {
   }
 
   signUp = async (req, res) => {
+
+    const { body } = req
+
     if (
       !body.nombre ||
       !body.apellido ||
@@ -58,8 +85,11 @@ export default class AuthControlador {
     }
 
     try {
-      const usuarioCreado = await this.usuarios.create(usuario)
-      res.status(201).json({ status: 'OK', data: usuarioCreado })
+      const usuarioCreado = await this.usuarios.crear(usuario)
+
+      const token = crearToken(usuarioCreado)
+
+      res.status(201).json({ status: 'OK', data: usuarioCreado, token })
     } catch (error) {
       res
         .status(error?.status || 500)

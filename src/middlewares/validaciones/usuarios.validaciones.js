@@ -24,7 +24,7 @@ export const crearUsuariosValidaciones  = [
       .notEmpty()
       .withMessage('La contraseña es obligatoria')
       .isLength({ min: 8 })
-      .withMessage('La contraseña debe tener al menos 6 caracteres'),
+      .withMessage('La contraseña debe tener al menos 8 caracteres'),
 
     body('celular')
       .optional()
@@ -53,7 +53,7 @@ export const actualizarUsuarioValidaciones = [
       .notEmpty()
       .withMessage('El apellido no puede estar vacío'),
 
-    body('nombre_usuario')
+    body('nombreUsuario')
       .optional()
       .isEmail()
       .withMessage('Debe ser un email válido'),

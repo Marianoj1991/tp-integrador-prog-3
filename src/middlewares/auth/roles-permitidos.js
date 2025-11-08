@@ -7,7 +7,7 @@ export function rolesPermitidos(...rolesPermitidos) {
       const mensajeResp =
         rolesPermitidos.length === 1 && rolesPermitidos[0] === 'admin'
           ? 'Solo administradores tienen acceso'
-          : 'Acceso no autorizado'
+          : 'Acceso administradores y empleados tiene acceso'
       return res.status(403).json({ mensaje: mensajeResp })
     }
     next()
