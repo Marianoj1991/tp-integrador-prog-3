@@ -85,15 +85,14 @@ export default class ReservasControlador {
     try {
       const formato = req.query.formato
 
-      
       if (!formato || !formatosValidos.includes(formato)) {
         return res
-        .status(400)
-        .json({ status: 'FAILED', data: { error: 'Formato no válido' } })
+          .status(400)
+          .json({ status: 'FAILED', data: { error: 'Formato no válido' } })
       }
-      
+
       await this.reservasServicio.generarInforme(formato)
-      
+
       const { buffer, path, headers } =
         await this.reservasServicio.generarInforme(formato)
 
@@ -117,10 +116,10 @@ export default class ReservasControlador {
         .json({ status: 'FAILED', data: { error: error?.message || error } })
     }
   }
-    actualizar = async (req, res) => {
+  actualizar = async (req, res) => {
     const body = req.body
     const reservaId = req.params.reservaId
-    
+
     if (!reservaId) {
       res.status(404).json({
         status: 'FAILED',
@@ -131,7 +130,10 @@ export default class ReservasControlador {
     }
 
     try {
-      const reservaActualizada = await this.reservasServicio.actualizar(reservaId, body)
+      const reservaActualizada = await this.reservasServicio.actualizar(
+        reservaId,
+        body
+      )
       res.status(200).json(reservaActualizada)
     } catch (error) {
       res

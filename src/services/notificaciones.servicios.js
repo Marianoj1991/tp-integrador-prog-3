@@ -8,8 +8,7 @@ process.loadEnvFile()
 
 export default class NotificacionesServicio {
   enviarCorreo = async (datosCorreo, adminMails) => {
-
-    console.log(datosCorreo);
+    console.log(datosCorreo)
 
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = path.dirname(__filename)
@@ -21,7 +20,6 @@ export default class NotificacionesServicio {
 
     try {
       const plantillaHandlebars = handlebars.compile(plantilla)
-
 
       const datos = {
         fecha: datosCorreo.fecha_reserva,

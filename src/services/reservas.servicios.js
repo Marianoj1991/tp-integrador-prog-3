@@ -122,7 +122,6 @@ export default class ReservasServicio {
           }
         }
       } else if (formato === 'csv') {
-        
         const csv = await this.informeServicios.informeReservasCsv(datos)
         return {
           path: csv,
